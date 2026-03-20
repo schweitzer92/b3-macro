@@ -86,11 +86,12 @@ async function fetchSELIC() {
 
 async function coletarDados() {
   const ativos = [
-    { id: 'IFNC',  nome: 'IFNC',    symbol: 'IFNC.SA', uni: 'pts' },
-    { id: 'IMAT',  nome: 'IMAT',    symbol: 'IMAT.SA', uni: 'pts' },
-    { id: 'SP500', nome: 'S&P 500', symbol: '^GSPC',   uni: 'pts' },
-    { id: 'BRENT', nome: 'Brent',   symbol: 'BZ=F',    uni: 'usd' },
-    { id: 'OURO',  nome: 'Ouro',    symbol: 'GLD',     uni: 'usd' },
+    { id: 'IFNC',  nome: 'IFNC',    symbol: 'IFNC.SA',  uni: 'pts' },
+    { id: 'IMAT',  nome: 'IMAT',    symbol: 'IMAT.SA',  uni: 'pts' },
+    { id: 'SP500', nome: 'S&P 500', symbol: '^GSPC',    uni: 'pts' },
+    { id: 'BRENT', nome: 'Brent',   symbol: 'BZ=F',     uni: 'usd' },
+    { id: 'OURO',  nome: 'Ouro',    symbol: 'GLD',      uni: 'usd' },
+    { id: 'DI1',   nome: 'DI1F29',  symbol: 'DI1F29.SA',uni: 'pts' },
   ];
 
   const resultado = {};
@@ -98,7 +99,6 @@ async function coletarDados() {
 
   const resultados = await Promise.allSettled([
     ...ativos.map(a => fetchYahoo(a.symbol).then(d => ({ ...a, ...d, fonte: 'Yahoo Finance' }))),
-    fetchSELIC().then(d => ({ id: 'DI1', nome: 'SELIC/DI1', uni: '%', ...d, fonte: 'Banco Central' }))
   ]);
 
   resultados.forEach(r => {
@@ -108,6 +108,16 @@ async function coletarDados() {
       erros.push(r.reason?.message || 'erro desconhecido');
     }
   });
+
+  // Se DI1 falhar no Yahoo, tenta BCB
+  if (!resultado['DI1']) {
+    try {
+      const selic = await fetchSELIC();
+      resultado['DI1'] = { id: 'DI1', nome: 'DI1/SELIC', uni: '%', ...selic };
+    } catch(e) {
+      erros.push('DI1: ' + e.message);
+    }
+  }
 
   return { dados: resultado, erros };
 }
