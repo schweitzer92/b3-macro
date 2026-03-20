@@ -237,10 +237,10 @@ let ultimaAnalise = null;
 const ATIVOS_CONFIG = [
   { id: 'IFNC',    nome: 'IFNC',       categoria: 'indice',    yf: 'IFNC.SA',  unidade: 'pts' },
   { id: 'IMAT',    nome: 'IMAT',       categoria: 'indice',    yf: 'IMAT.SA',  unidade: 'pts' },
-  { id: 'DI1',     nome: 'DI1F26',     categoria: 'juros',     yf: 'DI1F26.SA',unidade: '%'   },
+  { id: 'DI1',     nome: 'DI1 (proxy)',     categoria: 'juros',     yf: '%5EIRX',unidade: '%'   },
   { id: 'SP500',   nome: 'S&P 500',    categoria: 'externo',   yf: '^GSPC',    unidade: 'pts' },
   { id: 'BRENT',   nome: 'Brent',      categoria: 'commodity', yf: 'BZ=F',     unidade: 'USD' },
-  { id: 'OURO',    nome: 'Ouro',       categoria: 'commodity', yf: 'GC=F',     unidade: 'USD' },
+  { id: 'OURO',    nome: 'Ouro',       categoria: 'commodity', yf: 'GLD',     unidade: 'USD' },
 ];
 
 // ==========================================
@@ -385,7 +385,7 @@ async function rodarAnalise() {
   const spinner = adicionarSpinner();
 
   try {
-    const resposta = await fetch('/api/analyze', {
+    const resposta = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
