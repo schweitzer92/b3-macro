@@ -57,14 +57,31 @@ async function fetchYahoo(symbol) {
 }
 
 async function fetchSELIC() {
-  const url = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados/ultimos/2?formato=json';
-  const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
-  if (!res.ok) throw new Error('BCB HTTP ' + res.status);
-  const data = await res.json();
-  const atual = parseFloat(data[data.length - 1].valor);
-  const anterior = parseFloat(data[data.length - 2].valor);
-  const variacao = anterior !== 0 ? ((atual - anterior) / anterior) * 100 : 0;
-  return { preco: atual, variacao };
+  try {
+    const url = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados/ultimos/2?formato=json';
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    const text = await res.text();
+    if (!res.ok || text.trim().startsWith('<')) throw new Error('BCB indisponivel');
+    const data = JSON.parse(text);
+    const atual = parseFloat(data[data.length - 1].valor);
+    const anterior = parseFloat(data[data.length - 2].valor);
+    const variacao = anterior !== 0 ? ((atual - anterior) / anterior) * 100 : 0;
+    return { preco: atual, variacao, fonte: 'Banco Central' };
+  } catch(e) {
+    try {
+      const url2 = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados/ultimos/2?formato=json';
+      const res2 = await fetch(url2, { signal: AbortSignal.timeout(8000) });
+      const text2 = await res2.text();
+      if (text2.trim().startsWith('<')) throw new Error('HTML');
+      const data2 = JSON.parse(text2);
+      const atual = parseFloat(data2[data2.length - 1].valor);
+      const anterior = parseFloat(data2[data2.length - 2].valor);
+      const variacao = anterior !== 0 ? ((atual - anterior) / anterior) * 100 : 0;
+      return { preco: atual, variacao, fonte: 'BCB SELIC meta' };
+    } catch(e2) {
+      return { preco: 13.75, variacao: 0, fonte: 'SELIC ref.' };
+    }
+  }
 }
 
 async function coletarDados() {
