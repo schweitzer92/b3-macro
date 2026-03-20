@@ -336,8 +336,26 @@ async function coletarDados() {
   document.getElementById('footer-status').textContent = `Dados coletados às ${new Date().toLocaleTimeString('pt-BR')}`;
 }
 
+// Busca SELIC do Banco Central (proxy para DI1)
+async function fetchSELIC() {
+  const url = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados/ultimos/2?formato=json';
+  const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+  const response = await fetch(proxy, { signal: AbortSignal.timeout(6000) });
+  if (!response.ok) throw new Error('HTTP ' + response.status);
+  const outer = await response.json();
+  const data = JSON.parse(outer.contents);
+  if (!data || data.length < 2) throw new Error('Sem dados SELIC');
+  const atual = parseFloat(data[data.length - 1].valor);
+  const anterior = parseFloat(data[data.length - 2].valor);
+  const varDiaria = atual - anterior;
+  const varPct = anterior !== 0 ? (varDiaria / anterior) * 100 : 0;
+  return { preco: atual, variacao: varPct, fonte: 'Banco Central' };
+}
+
 // Yahoo Finance via allorigins proxy (contorna CORS)
 async function fetchYahooFinance(ativo) {
+  if (ativo.id === 'DI1') return await fetchSELIC();
+
   const symbol = encodeURIComponent(ativo.yf);
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=2d`;
   const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
