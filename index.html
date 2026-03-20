@@ -296,37 +296,31 @@ async function coletarDados() {
   const btn = document.getElementById('btn-coletar');
   btn.disabled = true;
   btn.textContent = '⏳ COLETANDO...';
-
   setMainStatus('coletando');
-  logLine('info', 'Iniciando coleta de dados de mercado...');
-  logLine('info', 'Tentando fontes: ADVFN → Yahoo Finance → simulação');
-
+  logLine('info', 'Coletando dados via backend Vercel...');
   document.getElementById('footer-status').textContent = 'Coletando dados...';
 
-  // Tenta buscar do Yahoo Finance via API pública
-  const resultados = await Promise.allSettled(
-    ATIVOS_CONFIG.map(a => fetchYahooFinance(a))
-  );
-
-  let coletados = 0;
-  resultados.forEach((res, i) => {
-    const ativo = ATIVOS_CONFIG[i];
-    if (res.status === 'fulfilled' && res.value) {
-      dadosMercado[ativo.id] = res.value;
+  try {
+    const res = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'coletar' })
+    });
+    const json = await res.json();
+    const dados = json.dados || {};
+    let coletados = 0;
+    Object.entries(dados).forEach(([id, d]) => {
+      dadosMercado[id] = d;
       coletados++;
-      logLine('ok', `✓ ${ativo.nome}: ${formatNum(res.value.preco, ativo.unidade)} (${res.value.variacao >= 0 ? '+' : ''}${res.value.variacao.toFixed(2)}%) via ${res.value.fonte}`);
-    } else {
-      dadosMercado[ativo.id] = simularAtivo(ativo);
-      logLine('warn', `⚠ ${ativo.nome}: usando dados simulados (CORS bloqueado em browser)`);
-    }
-  });
-
-  renderAtivos();
-  logLine('ok', `Coleta concluída. ${coletados}/${ATIVOS_CONFIG.length} ativos via API pública.`);
-
-  if (coletados < ATIVOS_CONFIG.length) {
-    logLine('warn', 'Nota: Para dados 100% reais em browser, configure um proxy CORS ou use a API da sua corretora.');
-    logLine('info', 'Dica: Rode este sistema como script Python para acesso direto ao Yahoo Finance sem restrições.');
+      const uni = d.uni || '';
+      const val = uni === '%' ? d.preco.toFixed(2) + '%' : uni === 'usd' ? 'U$ ' + d.preco.toFixed(2) : Math.round(d.preco).toLocaleString('pt-BR');
+      logLine('ok', `✓ ${d.nome}: ${val} (${d.variacao >= 0 ? '+' : ''}${d.variacao.toFixed(2)}%) via ${d.fonte}`);
+    });
+    if (json.erros?.length) json.erros.forEach(e => logLine('warn', '⚠ ' + e));
+    renderAtivos();
+    logLine('ok', `Coleta concluída. ${coletados}/6 ativos coletados.`);
+  } catch (err) {
+    logLine('err', 'Erro na coleta: ' + err.message);
   }
 
   btn.disabled = false;
@@ -336,90 +330,36 @@ async function coletarDados() {
   document.getElementById('footer-status').textContent = `Dados coletados às ${new Date().toLocaleTimeString('pt-BR')}`;
 }
 
-// Busca SELIC do Banco Central (proxy para DI1)
-async function fetchSELIC() {
-  const url = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados/ultimos/2?formato=json';
-  const proxy = `https://corsproxy.io/?${encodeURIComponent(url)}`;
-  const response = await fetch(proxy, { signal: AbortSignal.timeout(8000) });
-  if (!response.ok) throw new Error('HTTP ' + response.status);
-  const data = await response.json();
-  if (!data || data.length < 2) throw new Error('Sem dados SELIC');
-  const atual = parseFloat(data[data.length - 1].valor);
-  const anterior = parseFloat(data[data.length - 2].valor);
-  const varPct = anterior !== 0 ? ((atual - anterior) / anterior) * 100 : 0;
-  return { preco: atual, variacao: varPct, fonte: 'Banco Central' };
-}
-
-// Yahoo Finance via corsproxy.io
-async function fetchYahooFinance(ativo) {
-  if (ativo.id === 'DI1') return await fetchSELIC();
-
-  const symbol = encodeURIComponent(ativo.yf);
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=2d`;
-  const proxy = `https://corsproxy.io/?${encodeURIComponent(url)}`;
-
-  const response = await fetch(proxy, { signal: AbortSignal.timeout(8000) });
-  if (!response.ok) throw new Error('HTTP ' + response.status);
-  const data = await response.json();
-  const result = data.chart?.result?.[0];
-  if (!result) throw new Error('Sem dados');
-
-  const meta = result.meta;
-  const preco = meta.regularMarketPrice || meta.previousClose;
-  const prevClose = meta.previousClose || meta.chartPreviousClose;
-  const variacao = prevClose ? ((preco - prevClose) / prevClose) * 100 : 0;
-
-  return { preco, variacao, fonte: 'Yahoo Finance', symbol: ativo.yf };
-}
-
-// Simulação realista para fallback
-function simularAtivo(ativo) {
-  const bases = { IFNC: 14800, IMAT: 9200, DI1: 13.5, SP500: 5850, BRENT: 82, OURO: 2340 };
-  const base = bases[ativo.id] || 1000;
-  const variacao = (Math.random() - 0.48) * 2.5;
-  const preco = base * (1 + variacao / 100);
-  return { preco, variacao, fonte: 'simulado' };
-}
-
 // ==========================================
-// ANÁLISE COM CLAUDE API
+// ANÁLISE COM CLAUDE API (via backend)
 // ==========================================
 async function rodarAnalise() {
   const btn = document.getElementById('btn-analisar');
   btn.disabled = true;
   btn.textContent = '⚡ ANALISANDO...';
   setMainStatus('analisando');
-
   logLine('info', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   logLine('info', 'Iniciando análise macroeconômica com IA...');
-  logLine('info', `Modelo: claude-sonnet-4-20250514`);
-
-  const contexto = montarContexto();
-  logLine('ok', 'Contexto montado. Enviando para análise...');
 
   const spinner = adicionarSpinner();
 
   try {
-    const resposta = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: SYSTEM_PROMPT,
-        messages: [{ role: 'user', content: contexto }]
-      })
+      body: JSON.stringify({ action: 'analyze' })
     });
-
     spinner.remove();
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
 
-    if (!resposta.ok) {
-      const err = await resposta.json().catch(() => ({}));
-      throw new Error(err.error?.message || 'Erro na API: ' + resposta.status);
-    }
+    const dados = json.dados || {};
+    Object.entries(dados).forEach(([id, d]) => { dadosMercado[id] = d; });
+    renderAtivos();
 
-    const data = await resposta.json();
-    const texto = data.content?.map(b => b.text || '').join('') || '';
+    const claudeData = json.claude;
+    const texto = claudeData?.content?.map(b => b.text || '').join('') || '';
+    if (!texto) throw new Error(claudeData?.error?.message || 'Resposta vazia da IA');
 
     ultimaAnalise = texto;
     processarResposta(texto);
@@ -428,13 +368,7 @@ async function rodarAnalise() {
 
   } catch (err) {
     spinner.remove();
-    logLine('err', 'Erro na chamada da API: ' + err.message);
-    if (err.message.includes('Failed to fetch') || err.message.includes('CORS')) {
-      logLine('warn', 'CORS bloqueado: a Anthropic API não permite chamadas diretas do browser.');
-      logLine('info', '→ Para uso em produção: crie um backend simples (Node.js/Python/Vercel) que faz o proxy.');
-      logLine('info', '→ Alternativa rápida: usar a chave via backend serverless (Vercel Edge Function).');
-      mostrarInstrucoes();
-    }
+    logLine('err', 'Erro: ' + err.message);
   }
 
   btn.disabled = false;
