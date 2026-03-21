@@ -453,21 +453,45 @@ function processarResposta(texto) {
   const sc = json.score_macro;
   const travas = json.travas_ativas || [];
   const regiao = json.regiao_operacional || '';
+  const tipoDia = json.tipo_dia || '';
+  const bloco = json.bloco_horario || '';
+  const alerta = json.alerta_operacional || '';
+  const tipoEntrada = json.tipo_entrada || '';
+
   const corScore = sc >= 3 ? 'var(--accent2)' : sc <= -3 ? 'var(--danger)' : 'var(--warn)';
   const txtScore = sc >= 3 ? 'COMPRADOR' : sc <= -3 ? 'VENDEDOR' : 'NEUTRO';
   const corRegiao = regiao === 'A+' ? 'var(--accent2)' : regiao === 'A' ? 'var(--warn)' : 'var(--danger)';
+  const corAlerta = alerta === 'Qualidade' ? 'var(--accent2)' : alerta === 'Perigo' ? 'var(--danger)' : 'var(--warn)';
+  const corBloco = bloco === 'Abertura' ? 'var(--accent2)' : bloco === 'Tarde' ? 'var(--win)' : 'var(--muted)';
+
   let biasHtml = '';
-  if (sc !== undefined) biasHtml += `<div style="margin-bottom:5px"><span style="color:${corScore};font-weight:bold">Score Macro: ${sc > 0 ? '+' : ''}${sc} — ${txtScore}</span></div>`;
-  if (regiao) biasHtml += `<div style="margin-bottom:5px;font-size:11px">Região operacional: <span style="color:${corRegiao};font-weight:bold">${regiao}</span></div>`;
-  if (travas.length) biasHtml += `<div style="color:var(--danger);font-size:11px;margin-bottom:5px">⚠ Travas ativas: ${travas.join(' | ')}</div>`;
-  else if (sc !== undefined) biasHtml += `<div style="color:var(--accent2);font-size:11px;margin-bottom:5px">✓ Sem travas ativas</div>`;
-  if (json.bias_macro) biasHtml += `<div style="font-size:11px;color:var(--text);margin-top:4px">${json.bias_macro}</div>`;
+  // Linha 1: Score + Tipo do dia
+  if (sc !== undefined || tipoDia) {
+    biasHtml += `<div style="display:flex;gap:10px;margin-bottom:5px;flex-wrap:wrap">`;
+    if (sc !== undefined) biasHtml += `<span style="color:${corScore};font-weight:bold">Score: ${sc > 0 ? '+' : ''}${sc} ${txtScore}</span>`;
+    if (tipoDia) biasHtml += `<span style="color:var(--muted);font-size:11px">| Dia ${tipoDia}</span>`;
+    if (bloco) biasHtml += `<span style="color:${corBloco};font-size:11px">| ${bloco}</span>`;
+    biasHtml += `</div>`;
+  }
+  // Linha 2: Região + Alerta + Tipo entrada
+  biasHtml += `<div style="display:flex;gap:8px;margin-bottom:5px;flex-wrap:wrap;font-size:11px">`;
+  if (regiao) biasHtml += `<span>Região: <span style="color:${corRegiao};font-weight:bold">${regiao}</span></span>`;
+  if (alerta) biasHtml += `<span style="color:${corAlerta}">| ${alerta}</span>`;
+  if (tipoEntrada && tipoEntrada !== 'N/A') biasHtml += `<span style="color:var(--acc)">| ${tipoEntrada}</span>`;
+  biasHtml += `</div>`;
+  // Linha 3: Travas
+  if (travas.length) biasHtml += `<div style="color:var(--danger);font-size:11px;margin-bottom:4px">⚠ ${travas.join(' | ')}</div>`;
+  else if (sc !== undefined) biasHtml += `<div style="color:var(--accent2);font-size:11px;margin-bottom:4px">✓ Sem travas</div>`;
+  // Linha 4: Bias texto
+  if (json.bias_macro) biasHtml += `<div style="font-size:11px;color:var(--text);line-height:1.6">${json.bias_macro}</div>`;
   if (biasHtml) document.getElementById('bias-macro').innerHTML = biasHtml;
 
-  logLine('section', '── PROTOCOLO 4.0 — ANÁLISE MACRO ──');
-  if (sc !== undefined) logLine('ai', `Score Macro: ${sc > 0 ? '+' : ''}${sc} (${txtScore}) | Região: ${regiao || '—'}`);
-  if (travas.length) logLine('warn', `Travas ativas: ${travas.join(' | ')}`);
-  else logLine('ok', 'Sem travas operacionais ativas');
+  logLine('section', '── PROTOCOLOS 4.0 + 5.0 ──');
+  if (tipoDia) logLine('ai', `Dia ${tipoDia} | ${bloco} | Região ${regiao} | ${alerta}`);
+  if (sc !== undefined) logLine('ai', `Score Macro: ${sc > 0 ? '+' : ''}${sc} (${txtScore})`);
+  if (tipoEntrada && tipoEntrada !== 'N/A') logLine('info', `Tipo de entrada: ${tipoEntrada}`);
+  if (travas.length) logLine('warn', `Travas: ${travas.join(' | ')}`);
+  else logLine('ok', 'Sem travas operacionais');
   if (json.bias_macro) logLine('ai', json.bias_macro);
 
   // Correlações
