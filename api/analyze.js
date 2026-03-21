@@ -146,6 +146,51 @@ Se qualquer resposta for NÃO: não entrar.
 
 ---
 
+## PROTOCOLO 5.0 — CAMADAS AVANÇADAS (TIMING, LIQUIDEZ, INTENÇÃO)
+
+### CAMADA 1 — TIMING INSTITUCIONAL
+Blocos de horário (Brasília):
+- 09:00–10:30 (ABERTURA): maior volatilidade, definição de direção do dia. Melhor janela.
+- 10:30–14:30 (MEIO): lateralização e ruído. Operar APENAS região A+. Reduzir frequência.
+- 14:30–17:00 (TARDE): fluxo mais limpo, continuação ou reversão. Segunda melhor janela.
+Regra: horário de meio do dia → exigir setup A+ obrigatório ou não operar.
+
+### CAMADA 2 — MAPEAMENTO DE LIQUIDEZ (obrigatório antes de operar)
+Sempre identificar onde está a liquidez que o mercado busca:
+1. Máxima e mínima do dia anterior
+2. Abertura do dia
+3. VWAP (preço médio ponderado por volume)
+4. POC — região de maior volume
+5. Topos e fundos recentes relevantes
+Regra: preço ENTRE liquidez → NÃO operar. Preço INDO BUSCAR liquidez → operar a favor.
+
+### CAMADA 3 — INTENÇÃO DO MOVIMENTO (Flow vs Price)
+Diferenciar movimento saudável de armadilha:
+- SAUDÁVEL: continuidade direcional, pouco pavio, volume acompanha o movimento.
+- FALSO/ARMADILHA: movimento rápido, rejeição imediata, falta de continuidade, volume seco.
+Regra: preço se move mas não continua → suspeitar de armadilha → EVITAR entrada.
+
+### CLASSIFICADOR DO DIA (usado para calibrar confiança)
+- DIA DIRECIONAL: tendência clara desde a abertura. Operar continuação. Alta confiança.
+- DIA LATERAL: range definido. Operar nos extremos (A+). Média confiança.
+- DIA DE EVENTO (Payroll, CPI, Copom): reduzir lote, nunca operar o 1o movimento. Baixa confiança.
+- DIA DE RISCO (VIX alto): máxima cautela. Reduzir ou zerar operações. Confiança muito baixa.
+
+### ALERTAS OPERACIONAIS
+- BLOQUEIO (não operar): mercado no meio do range, sem liquidez próxima, volume não confirmado.
+- QUALIDADE (operar): região A+, assimetria adequada, confluência macro, liquidez mapeada.
+- PERIGO (cautela máxima): VIX acelerando, DXY forte, yields mudando direção abruptamente.
+
+### CONTROLE DE FREQUÊNCIA
+- Máximo 2–3 trades de alta qualidade por dia.
+- Após atingir o limite diário → PARAR, não buscar mais operações.
+- Qualidade > Quantidade. Operar pouco, operar bem, operar com contexto.
+
+### REGRA FINAL 5.0
+"Timing + Liquidez + Intenção completam o sistema. Operar pouco, operar bem e operar com contexto."
+
+---
+
 ## BÍBLIA DO CANDLESTICK — PADRÕES
 
 REVERSÃO: Engolfo (2o candle envolve 1o), Pin Bar/Martelo (cauda longa 2x corpo), Estrela Cadente (cauda superior longa), Doji (abertura=fechamento), Estrela da Manhã/Noite (3 candles), Harami/Barra Interna (vela dentro da mãe), Pinças (máximas/mínimas iguais em nível).
@@ -158,36 +203,40 @@ CONFLUÊNCIA: Quanto mais fatores alinhados, maior a confiança. Mínimo 2 para 
 
 ---
 
-## INSTRUÇÕES DE ANÁLISE — SEGUIR NESTA ORDEM
+## INSTRUÇÕES DE ANÁLISE — SEGUIR NESTA ORDEM (PROTOCOLOS 4.0 + 5.0)
 
-1. SCORE MACRO: calcular com base nos dados (Ouro=risk-off, SP500=risco, Brent=inflação)
-2. CORRELAÇÃO BRASIL: avaliar IFNC, IMAT, DI — alinhados ou divergentes?
-3. VALIDAÇÃO DE FLUXO: comparar variações relativas como proxy do R
-4. REGIÃO OPERACIONAL: A+ (extremo), A (relevante), B (meio — proibido)
-5. TIPO DE ENTRADA: identificar qual dos 5 tipos é aplicável:
-   - Rejeição em suporte / resistência
-   - Rompimento (aguardar pullback)
-   - Continuação em tendência
-   - Exaustão
-6. CHECKLIST: responder todas as 6 perguntas. Se qualquer NÃO → NEUTRO
-7. GESTÃO: definir parcial no alvo 1, stop técnico, break-even após parcial
+1. CLASSIFICAR O DIA: Direcional / Lateral / Evento / Risco (com base nas variações dos ativos)
+2. TIMING: identificar bloco horário atual (Abertura / Meio / Tarde) usando a hora recebida
+3. SCORE MACRO: calcular (+1/-1 por ativo). SP500↑=+1, Ouro↑=-1(WIN)/+1(WDO), Brent↑=-1(WIN)/+1(WDO)
+4. CORRELAÇÃO BRASIL: IFNC, IMAT, DI — alinhados ou divergentes?
+5. VALIDAÇÃO DE FLUXO: variações relativas como proxy do R (IFNC+IMAT vs WIN)
+6. LIQUIDEZ: identificar onde o mercado provavelmente busca liquidez (topos/fundos recentes, abertura)
+7. INTENÇÃO: movimento é saudável (volume + continuidade) ou armadilha (rápido + rejeição)?
+8. REGIÃO OPERACIONAL: A+ (extremo/liquidez), A (relevante), B (meio — proibido)
+9. TIPO DE ENTRADA: Rejeição / Rompimento(pullback) / Continuação / Exaustão
+10. CHECKLIST 6/6: Macro✓ Correlação✓ Volume✓ Região A+✓ Padrão✓ Assimetria✓
+11. GESTÃO: stop técnico, parcial no alvo 1, break-even após parcial
 
-ESCALA DE CONFIANÇA:
-- Checklist 6/6 + score >= ±3 + região A+ = 80-95%
-- Checklist 5/6 + 2+ confluências = 60-79%
-- Checklist 4/6 ou região A = 40-59%
-- Qualquer trava ativa ou score neutro = NEUTRO (< 40%)
+ESCALA DE CONFIANÇA (Protocolo 5.0):
+- Dia direcional + abertura/tarde + checklist 6/6 + score ±3+ + região A+ = 85-95%
+- Checklist 5/6 + 2 confluências + região A+ = 70-84%
+- Meio do dia OU checklist 4/6 OU região A = 50-69%
+- Dia de evento OU dia de risco OU trava ativa OU score neutro = NEUTRO
 
-IMPORTANTE: Na justificativa, informar QUAL TIPO DE ENTRADA foi identificado (Rejeição/Rompimento/Continuação/Exaustão) e quais itens do checklist foram aprovados.
+Na justificativa: informar tipo do dia, bloco horário, tipo de entrada identificado, itens do checklist aprovados e alertas operacionais ativos.
 
 RESPONDA APENAS COM JSON PURO (sem markdown, sem texto antes ou depois):
 {
+  "tipo_dia": "Direcional ou Lateral ou Evento ou Risco",
+  "bloco_horario": "Abertura ou Meio ou Tarde",
   "score_macro": 0,
-  "travas_ativas": ["lista de travas ativas ou vazio"],
+  "travas_ativas": ["lista de travas ativas, ou array vazio se nenhuma"],
+  "alerta_operacional": "Bloqueio ou Qualidade ou Perigo",
   "regiao_operacional": "A+ ou A ou B",
-  "bias_macro": "análise macro em 2-3 frases seguindo o protocolo 4.0",
+  "tipo_entrada": "Rejeição Suporte ou Rejeição Resistência ou Rompimento ou Continuação ou Exaustão ou N/A",
+  "bias_macro": "análise macro em 2-3 frases com timing e liquidez",
   "correlacoes": ["correlação 1 com impacto direto", "correlação 2", "correlação 3"],
-  "padroes_candle": "padrão identificado, região e confluências pelo método",
+  "padroes_candle": "padrão + intenção do movimento (saudável ou armadilha) + liquidez mapeada",
   "WIN": {
     "direcao": "LONG ou SHORT ou NEUTRO",
     "entrada": 0,
@@ -196,7 +245,7 @@ RESPONDA APENAS COM JSON PURO (sem markdown, sem texto antes ou depois):
     "alvo2": 0,
     "risco_retorno": "1:X",
     "confianca": 0,
-    "justificativa": "protocolo 4.0 + confluências que validam o setup"
+    "justificativa": "tipo dia + bloco + tipo entrada + checklist aprovado + alertas"
   },
   "WDO": {
     "direcao": "LONG ou SHORT ou NEUTRO",
@@ -206,7 +255,7 @@ RESPONDA APENAS COM JSON PURO (sem markdown, sem texto antes ou depois):
     "alvo2": 0,
     "risco_retorno": "1:X",
     "confianca": 0,
-    "justificativa": "protocolo 4.0 + confluências que validam o setup"
+    "justificativa": "tipo dia + bloco + tipo entrada + checklist aprovado + alertas"
   }
 }`;
 
