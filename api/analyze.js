@@ -191,6 +191,53 @@ Regra: preço se move mas não continua → suspeitar de armadilha → EVITAR en
 
 ---
 
+## PROTOCOLO 6.0 — EXECUÇÃO, COMPORTAMENTO E PERFORMANCE
+
+### CONTROLE DE ESTADO MENTAL (avaliar antes de cada sessão)
+- NEUTRO: operar normalmente.
+- LEVE (ansioso, distraído, pressionado): reduzir lote pela metade.
+- ALTERADO (frustrado, eufórico, com medo): PROIBIDO OPERAR.
+Regra: se o trader está em estado alterado, nenhum setup é válido.
+
+### TRAVAS COMPORTAMENTAIS (automáticas)
+- Após 2 losses seguidos: reduzir risco na próxima operação.
+- Após 3 losses seguidos: PARAR O DIA. Sem exceções.
+- Após ganho relevante (+2R no dia): parar ou reduzir exposição drasticamente.
+Objetivo: proteger capital psicológico e financeiro.
+
+### CLASSIFICAÇÃO DE TRADE (qualidade independe do resultado)
+- TRADE BOM: seguiu todas as regras do protocolo — mesmo que dê prejuízo.
+- TRADE RUIM: quebrou alguma regra — mesmo que dê lucro.
+Regra: o objetivo é executar bem, não adivinhar o mercado.
+
+### PROTOCOLO PÓS-TRADE (responder após cada operação)
+1. Segui o plano traçado antes da entrada?
+2. Entrei na região correta (A+)?
+3. Respeitei o stop técnico?
+4. Havia justificativa clara (por que entrar, o que invalida, onde está a liquidez)?
+Se qualquer resposta for NÃO → trade ruim, independente do resultado financeiro.
+
+### PROTEÇÃO DE LUCRO DIÁRIO
+- Se atingir +2R no dia: PARAR ou reduzir drasticamente o lote.
+- Nunca devolver lucro ao mercado por excesso de operações.
+- Lucro protegido = consistência a longo prazo.
+
+### MÓDULO DE PERFORMANCE (métricas a acompanhar)
+- Taxa de acerto por tipo de setup (Rejeição, Rompimento, Continuação, Exaustão).
+- Resultado por bloco horário (Abertura / Meio / Tarde).
+- Resultado por tipo de dia (Direcional / Lateral / Evento / Risco).
+- Evolução do score de qualidade de trades (bons vs ruins).
+
+### MÓDULO DE RISCO (limites obrigatórios)
+- Definir limite diário de perda ANTES de operar (ex: -2R = encerrar o dia).
+- Limite por operação: nunca arriscar mais de 1-2% do capital.
+- Bloqueio automático ao atingir o limite diário: parar sem negociação.
+
+### REGRA FINAL 6.0
+"O sucesso não está em saber mais, mas em executar com consistência absoluta."
+
+---
+
 ## BÍBLIA DO CANDLESTICK — PADRÕES
 
 REVERSÃO: Engolfo (2o candle envolve 1o), Pin Bar/Martelo (cauda longa 2x corpo), Estrela Cadente (cauda superior longa), Doji (abertura=fechamento), Estrela da Manhã/Noite (3 candles), Harami/Barra Interna (vela dentro da mãe), Pinças (máximas/mínimas iguais em nível).
@@ -230,13 +277,16 @@ RESPONDA APENAS COM JSON PURO (sem markdown, sem texto antes ou depois):
   "tipo_dia": "Direcional ou Lateral ou Evento ou Risco",
   "bloco_horario": "Abertura ou Meio ou Tarde",
   "score_macro": 0,
-  "travas_ativas": ["lista de travas ativas, ou array vazio se nenhuma"],
+  "travas_ativas": ["lista de travas ou array vazio"],
   "alerta_operacional": "Bloqueio ou Qualidade ou Perigo",
   "regiao_operacional": "A+ ou A ou B",
   "tipo_entrada": "Rejeição Suporte ou Rejeição Resistência ou Rompimento ou Continuação ou Exaustão ou N/A",
+  "qualidade_setup": "A+ ou A ou B ou Inválido",
+  "limite_trades": "Dentro do limite (1-3/dia) ou Atingiu limite",
   "bias_macro": "análise macro em 2-3 frases com timing e liquidez",
   "correlacoes": ["correlação 1 com impacto direto", "correlação 2", "correlação 3"],
-  "padroes_candle": "padrão + intenção do movimento (saudável ou armadilha) + liquidez mapeada",
+  "padroes_candle": "padrão + intenção (saudável/armadilha) + liquidez mapeada",
+  "checklist_resultado": "6/6 ou X/6 — listar itens que falharam",
   "WIN": {
     "direcao": "LONG ou SHORT ou NEUTRO",
     "entrada": 0,
@@ -245,7 +295,7 @@ RESPONDA APENAS COM JSON PURO (sem markdown, sem texto antes ou depois):
     "alvo2": 0,
     "risco_retorno": "1:X",
     "confianca": 0,
-    "justificativa": "tipo dia + bloco + tipo entrada + checklist aprovado + alertas"
+    "justificativa": "tipo dia + bloco + tipo entrada + checklist + alertas 6.0"
   },
   "WDO": {
     "direcao": "LONG ou SHORT ou NEUTRO",
@@ -255,7 +305,7 @@ RESPONDA APENAS COM JSON PURO (sem markdown, sem texto antes ou depois):
     "alvo2": 0,
     "risco_retorno": "1:X",
     "confianca": 0,
-    "justificativa": "tipo dia + bloco + tipo entrada + checklist aprovado + alertas"
+    "justificativa": "tipo dia + bloco + tipo entrada + checklist + alertas 6.0"
   }
 }`;
 
