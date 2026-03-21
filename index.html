@@ -449,13 +449,26 @@ function processarResposta(texto) {
     return;
   }
 
-  // Bias macro
-  if (json.bias_macro) {
-    document.getElementById('bias-macro').innerHTML =
-      `<span style="color:var(--text)">${json.bias_macro}</span>`;
-    logLine('section', '── BIAS MACROECONÔMICO ──');
-    logLine('ai', json.bias_macro);
-  }
+  // Score macro + travas + região (Protocolo 4.0)
+  const sc = json.score_macro;
+  const travas = json.travas_ativas || [];
+  const regiao = json.regiao_operacional || '';
+  const corScore = sc >= 3 ? 'var(--accent2)' : sc <= -3 ? 'var(--danger)' : 'var(--warn)';
+  const txtScore = sc >= 3 ? 'COMPRADOR' : sc <= -3 ? 'VENDEDOR' : 'NEUTRO';
+  const corRegiao = regiao === 'A+' ? 'var(--accent2)' : regiao === 'A' ? 'var(--warn)' : 'var(--danger)';
+  let biasHtml = '';
+  if (sc !== undefined) biasHtml += `<div style="margin-bottom:5px"><span style="color:${corScore};font-weight:bold">Score Macro: ${sc > 0 ? '+' : ''}${sc} — ${txtScore}</span></div>`;
+  if (regiao) biasHtml += `<div style="margin-bottom:5px;font-size:11px">Região operacional: <span style="color:${corRegiao};font-weight:bold">${regiao}</span></div>`;
+  if (travas.length) biasHtml += `<div style="color:var(--danger);font-size:11px;margin-bottom:5px">⚠ Travas ativas: ${travas.join(' | ')}</div>`;
+  else if (sc !== undefined) biasHtml += `<div style="color:var(--accent2);font-size:11px;margin-bottom:5px">✓ Sem travas ativas</div>`;
+  if (json.bias_macro) biasHtml += `<div style="font-size:11px;color:var(--text);margin-top:4px">${json.bias_macro}</div>`;
+  if (biasHtml) document.getElementById('bias-macro').innerHTML = biasHtml;
+
+  logLine('section', '── PROTOCOLO 4.0 — ANÁLISE MACRO ──');
+  if (sc !== undefined) logLine('ai', `Score Macro: ${sc > 0 ? '+' : ''}${sc} (${txtScore}) | Região: ${regiao || '—'}`);
+  if (travas.length) logLine('warn', `Travas ativas: ${travas.join(' | ')}`);
+  else logLine('ok', 'Sem travas operacionais ativas');
+  if (json.bias_macro) logLine('ai', json.bias_macro);
 
   // Correlações
   if (json.correlacoes) {
