@@ -509,6 +509,18 @@ function processarResposta(texto) {
   }
 
   // WIN
+  // Qualidade do setup e checklist (Protocolo 6.0)
+  if (json.qualidade_setup || json.checklist_resultado) {
+    const qCor = json.qualidade_setup === 'A+' ? 'var(--accent2)' : json.qualidade_setup === 'A' ? 'var(--warn)' : 'var(--danger)';
+    let extra = '';
+    if (json.qualidade_setup) extra += `<div style="font-size:11px;margin-bottom:3px">Qualidade setup: <span style="color:${qCor};font-weight:bold">${json.qualidade_setup}</span></div>`;
+    if (json.checklist_resultado) extra += `<div style="font-size:11px;margin-bottom:3px;color:var(--muted)">Checklist: ${json.checklist_resultado}</div>`;
+    if (json.limite_trades) extra += `<div style="font-size:11px;color:var(--muted)">${json.limite_trades}</div>`;
+    const candle = document.getElementById('candles-info');
+    if (candle) candle.innerHTML = (extra ? extra + '<div style="margin-top:6px">' : '') + (json.padroes_candle || '') + (extra ? '</div>' : '');
+    logLine('info', `Setup: ${json.qualidade_setup || '—'} | Checklist: ${json.checklist_resultado || '—'}`);
+  }
+
   if (json.WIN) atualizarSinal('win', json.WIN, 'WIN');
   if (json.WDO) atualizarSinal('wdo', json.WDO, 'WDO');
 }
