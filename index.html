@@ -5,637 +5,357 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>B3 Macro Analyzer — WIN & WDO</title>
 <style>
-  :root {
-    --bg: #0d0e14;
-    --bg2: #13151f;
-    --bg3: #1a1d2e;
-    --border: #2a2d42;
-    --text: #e2e4f0;
-    --muted: #6b6f8a;
-    --accent: #5b6af0;
-    --accent2: #3dd68c;
-    --warn: #f0c040;
-    --danger: #f05b5b;
-    --win: #4a9eff;
-    --wdo: #ff9a3c;
-    --font: 'Courier New', monospace;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 13px; min-height: 100vh; }
-
-  /* HEADER */
-  .header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
-  .logo { font-size: 16px; font-weight: bold; letter-spacing: 2px; color: var(--accent); }
-  .logo span { color: var(--text); }
-  .clock { color: var(--muted); font-size: 12px; }
-  .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
-  .dot-ok { background: var(--accent2); box-shadow: 0 0 6px var(--accent2); animation: pulse 2s infinite; }
-  .dot-warn { background: var(--warn); }
-  .dot-off { background: var(--muted); }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
-
-  /* MAIN GRID */
-  .main { padding: 20px 24px; display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: auto auto auto; gap: 16px; }
-
-  /* CARDS */
-  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
-  .card-title { font-size: 11px; letter-spacing: 1.5px; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
-
-  /* ATIVOS GRID */
-  .ativos-card { grid-column: 1 / 4; }
-  .ativos-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
-  .ativo-box { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 10px 8px; text-align: center; cursor: default; transition: border-color 0.2s; }
-  .ativo-box:hover { border-color: var(--accent); }
-  .ativo-nome { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
-  .ativo-valor { font-size: 18px; font-weight: bold; color: var(--text); }
-  .ativo-var { font-size: 11px; margin-top: 3px; }
-  .var-pos { color: var(--accent2); }
-  .var-neg { color: var(--danger); }
-  .var-neu { color: var(--muted); }
-  .ativo-status { font-size: 10px; color: var(--muted); margin-top: 2px; }
-
-  /* WIN / WDO TARGET CARDS */
-  .target-card { position: relative; overflow: hidden; }
-  .target-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
-  .win-card::before { background: var(--win); }
-  .wdo-card::before { background: var(--wdo); }
-
-  .target-label { font-size: 22px; font-weight: bold; margin-bottom: 4px; }
-  .win-label { color: var(--win); }
-  .wdo-label { color: var(--wdo); }
-
-  .signal-badge { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; letter-spacing: 1px; margin: 6px 0; }
-  .signal-long { background: rgba(61,214,140,0.15); color: var(--accent2); border: 1px solid rgba(61,214,140,0.3); }
-  .signal-short { background: rgba(240,91,91,0.15); color: var(--danger); border: 1px solid rgba(240,91,91,0.3); }
-  .signal-aguarda { background: rgba(107,111,138,0.15); color: var(--muted); border: 1px solid rgba(107,111,138,0.3); }
-
-  .entry-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--border); }
-  .entry-row:last-child { border-bottom: none; }
-  .entry-key { color: var(--muted); font-size: 11px; }
-  .entry-val { font-size: 13px; font-weight: bold; }
-
-  /* CONSOLE IA */
-  .console-card { grid-column: 1 / 4; }
-  #console-output {
-    background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
-    padding: 16px; height: 320px; overflow-y: auto; font-size: 12px; line-height: 1.7;
-    color: var(--text);
-  }
-  #console-output .line-time { color: var(--muted); user-select: none; }
-  #console-output .line-info { color: var(--accent); }
-  #console-output .line-ok { color: var(--accent2); }
-  #console-output .line-warn { color: var(--warn); }
-  #console-output .line-err { color: var(--danger); }
-  #console-output .line-ai { color: var(--text); }
-  #console-output .section-header { color: var(--warn); font-weight: bold; margin-top: 6px; }
-
-  /* BOTÕES */
-  .actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
-  .btn { padding: 9px 18px; border-radius: 6px; border: none; cursor: pointer; font-family: var(--font); font-size: 12px; font-weight: bold; letter-spacing: 1px; transition: opacity 0.2s, transform 0.1s; }
-  .btn:hover { opacity: 0.85; }
-  .btn:active { transform: scale(0.97); }
-  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-success { background: #1d6b42; color: var(--accent2); }
-  .btn-danger { background: #6b1d1d; color: var(--danger); }
-  .btn-neutral { background: var(--bg3); color: var(--text); border: 1px solid var(--border); }
-
-  /* CONFIDENCE BAR */
-  .confidence-wrap { margin: 10px 0 4px; }
-  .conf-label { font-size: 10px; color: var(--muted); margin-bottom: 4px; display: flex; justify-content: space-between; }
-  .conf-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .conf-fill { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
-
-  /* LOG INFERIOR */
-  .footer-log { padding: 8px 24px; border-top: 1px solid var(--border); background: var(--bg2); display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
-
-  /* SCROLLBAR */
-  #console-output::-webkit-scrollbar { width: 6px; }
-  #console-output::-webkit-scrollbar-track { background: transparent; }
-  #console-output::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-  .loading-spinner { display: inline-block; width: 10px; height: 10px; border: 2px solid var(--muted); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 6px; vertical-align: middle; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .tag { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 10px; margin-left: 4px; }
-  .tag-macro { background: rgba(91,106,240,0.15); color: var(--accent); }
-  .tag-candle { background: rgba(240,192,64,0.15); color: var(--warn); }
+:root {
+  --bg: #0d0e14; --bg2: #13151f; --bg3: #1a1d2e;
+  --border: #2a2d42; --text: #e2e4f0; --muted: #6b6f8a;
+  --accent: #5b6af0; --accent2: #3dd68c; --warn: #f0c040;
+  --danger: #f05b5b; --win: #4a9eff; --wdo: #ff9a3c;
+  --font: 'Courier New', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 13px; min-height: 100vh; }
+.header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; }
+.logo { font-size: 15px; font-weight: bold; letter-spacing: 2px; color: var(--accent); }
+.logo span { color: var(--text); }
+.clock { color: var(--muted); font-size: 11px; }
+.status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.dot-ok { background: var(--accent2); }
+.dot-warn { background: var(--warn); }
+.dot-off { background: var(--muted); }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+.blink { animation: pulse 1.2s infinite; }
+.main { padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+.card-title { font-size: 10px; letter-spacing: 1.5px; color: var(--muted); text-transform: uppercase; margin-bottom: 10px; }
+.ativos-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.ativo-box { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 8px 6px; text-align: center; }
+.ativo-nome { font-size: 10px; color: var(--muted); margin-bottom: 3px; }
+.ativo-val { font-size: 15px; font-weight: bold; }
+.ativo-chg { font-size: 10px; margin-top: 2px; }
+.up { color: var(--accent2); } .dn { color: var(--danger); } .nu { color: var(--muted); }
+.btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.btn { padding: 8px 16px; border-radius: 5px; border: 1px solid var(--border); background: var(--bg3); color: var(--text); cursor: pointer; font-size: 11px; font-weight: bold; font-family: monospace; letter-spacing: 0.5px; transition: opacity 0.15s; }
+.btn:hover { opacity: 0.8; }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.btn-p { background: rgba(91,106,240,0.2); border-color: rgba(91,106,240,0.4); color: #a5b4fc; }
+.btn-g { background: rgba(61,214,140,0.1); border-color: rgba(61,214,140,0.3); color: var(--accent2); }
+.signals-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sig-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; position: relative; overflow: hidden; }
+.sig-card::after { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+.win-card::after { background: var(--win); }
+.wdo-card::after { background: var(--wdo); }
+.sig-title { font-size: 12px; font-weight: bold; margin-bottom: 8px; }
+.win-title { color: var(--win); } .wdo-title { color: var(--wdo); }
+.badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 8px; }
+.badge-long  { background: rgba(61,214,140,0.12); color: var(--accent2); border: 1px solid rgba(61,214,140,0.25); }
+.badge-short { background: rgba(240,91,91,0.12);  color: var(--danger);  border: 1px solid rgba(240,91,91,0.25); }
+.badge-idle  { background: rgba(107,111,138,0.15); color: var(--muted);   border: 1px solid rgba(107,111,138,0.2); }
+.rows { display: flex; flex-direction: column; gap: 4px; }
+.row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid var(--border); font-size: 11px; }
+.row:last-child { border-bottom: none; }
+.row-k { color: var(--muted); }
+.conf-wrap { margin-top: 8px; }
+.conf-lbl { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-bottom: 3px; }
+.conf-track { height: 3px; background: var(--border); border-radius: 2px; }
+.conf-fill { height: 100%; border-radius: 2px; transition: width 0.6s; }
+.info-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.info-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+.info-label { font-size: 10px; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
+.info-body { font-size: 11px; color: #9ca3af; line-height: 1.7; }
+.console { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; max-height: 200px; overflow-y: auto; font-size: 11px; line-height: 1.8; }
+.console::-webkit-scrollbar { width: 4px; }
+.console::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.l-info { color: #6366f1; } .l-ok { color: var(--accent2); } .l-warn { color: var(--warn); }
+.l-err { color: var(--danger); } .l-ts { color: var(--muted); } .l-sec { color: var(--warn); font-weight: bold; }
+.spin { display: inline-block; width: 8px; height: 8px; border: 1.5px solid var(--muted); border-top-color: var(--accent); border-radius: 50%; animation: sp 0.7s linear infinite; margin-right: 4px; }
+@keyframes sp { to { transform: rotate(360deg); } }
+.footer { padding: 6px 20px; border-top: 1px solid var(--border); background: var(--bg2); display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); }
 </style>
 </head>
 <body>
 
 <div class="header">
   <div class="logo">B3<span>MACRO</span></div>
-  <div style="display:flex;align-items:center;gap:16px">
-    <span id="status-label"><span class="status-dot dot-off" id="main-dot"></span>Aguardando</span>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span id="status-label"><span class="status-dot dot-off blink" id="main-dot"></span>Aguardando</span>
     <span class="clock" id="clock">--:--:--</span>
   </div>
 </div>
 
 <div class="main">
 
-  <!-- ATIVOS -->
-  <div class="card ativos-card">
-    <div class="card-title">Ativos monitorados em tempo real</div>
-    <div class="ativos-grid" id="ativos-grid">
-      <!-- gerado via JS -->
-    </div>
-    <div class="actions" style="margin-top:14px">
-      <button class="btn btn-primary" onclick="coletarDados()" id="btn-coletar">▶ COLETAR DADOS</button>
-      <button class="btn btn-success" onclick="rodarAnalise()" id="btn-analisar" disabled>⚡ ANALISAR COM IA</button>
-      <button class="btn btn-neutral" onclick="limparConsole()">✕ LIMPAR</button>
-      <button class="btn btn-neutral" onclick="autoRefresh()" id="btn-auto">↻ AUTO (30s)</button>
-    </div>
-  </div>
-
-  <!-- WIN -->
-  <div class="card target-card win-card">
-    <div class="card-title">Mini Índice — WIN</div>
-    <div class="target-label win-label" id="win-label">WIN</div>
-    <div id="win-signal"><span class="signal-badge signal-aguarda">AGUARDANDO ANÁLISE</span></div>
-    <div style="margin-top:10px" id="win-entries">
-      <div class="entry-row"><span class="entry-key">Entrada</span><span class="entry-val" id="win-entrada">—</span></div>
-      <div class="entry-row"><span class="entry-key">Stop</span><span class="entry-val var-neg" id="win-stop">—</span></div>
-      <div class="entry-row"><span class="entry-key">Alvo 1</span><span class="entry-val var-pos" id="win-alvo1">—</span></div>
-      <div class="entry-row"><span class="entry-key">Alvo 2</span><span class="entry-val var-pos" id="win-alvo2">—</span></div>
-      <div class="entry-row"><span class="entry-key">R/R</span><span class="entry-val" id="win-rr">—</span></div>
-    </div>
-    <div class="confidence-wrap">
-      <div class="conf-label"><span>Confiança do setup</span><span id="win-conf-pct">0%</span></div>
-      <div class="conf-bar"><div class="conf-fill" id="win-conf-bar" style="width:0%;background:var(--win)"></div></div>
-    </div>
-  </div>
-
-  <!-- WDO -->
-  <div class="card target-card wdo-card">
-    <div class="card-title">Mini Dólar — WDO</div>
-    <div class="target-label wdo-label" id="wdo-label">WDO</div>
-    <div id="wdo-signal"><span class="signal-badge signal-aguarda">AGUARDANDO ANÁLISE</span></div>
-    <div style="margin-top:10px" id="wdo-entries">
-      <div class="entry-row"><span class="entry-key">Entrada</span><span class="entry-val" id="wdo-entrada">—</span></div>
-      <div class="entry-row"><span class="entry-key">Stop</span><span class="entry-val var-neg" id="wdo-stop">—</span></div>
-      <div class="entry-row"><span class="entry-key">Alvo 1</span><span class="entry-val var-pos" id="wdo-alvo1">—</span></div>
-      <div class="entry-row"><span class="entry-key">Alvo 2</span><span class="entry-val var-pos" id="wdo-alvo2">—</span></div>
-      <div class="entry-row"><span class="entry-key">R/R</span><span class="entry-val" id="wdo-rr">—</span></div>
-    </div>
-    <div class="confidence-wrap">
-      <div class="conf-label"><span>Confiança do setup</span><span id="wdo-conf-pct">0%</span></div>
-      <div class="conf-bar"><div class="conf-fill" id="wdo-conf-bar" style="width:0%;background:var(--wdo)"></div></div>
-    </div>
-  </div>
-
-  <!-- BIAS MACRO -->
   <div class="card">
-    <div class="card-title">Bias Macro <span class="tag tag-macro">IA</span></div>
-    <div id="bias-macro" style="font-size:12px;line-height:1.8;color:var(--muted)">
-      Execute a coleta e análise para ver o bias macroeconômico atual.
+    <div class="card-title">Ativos monitorados</div>
+    <div class="ativos-grid" id="ativos-grid"></div>
+    <div class="btns">
+      <button class="btn btn-p" id="btn-col" onclick="coletarDados()">▶ Coletar dados</button>
+      <button class="btn btn-g" id="btn-an" onclick="rodarAnalise()" disabled>⚡ Analisar com IA</button>
+      <button class="btn" onclick="limpar()">✕ Limpar</button>
+      <button class="btn" id="btn-auto" onclick="autoRefresh()">↻ Auto (30s)</button>
     </div>
   </div>
 
-  <!-- CANDLES -->
+  <div class="signals-row">
+    <div class="sig-card win-card">
+      <div class="sig-title win-title">Mini Indice — WIN</div>
+      <div id="win-badge"><span class="badge badge-idle">AGUARDANDO</span></div>
+      <div class="rows">
+        <div class="row"><span class="row-k">Entrada</span><span id="win-ent">—</span></div>
+        <div class="row"><span class="row-k">Stop</span><span class="dn" id="win-stp">—</span></div>
+        <div class="row"><span class="row-k">Alvo 1</span><span class="up" id="win-a1">—</span></div>
+        <div class="row"><span class="row-k">Alvo 2</span><span class="up" id="win-a2">—</span></div>
+        <div class="row"><span class="row-k">R/R</span><span id="win-rr">—</span></div>
+      </div>
+      <div class="conf-wrap">
+        <div class="conf-lbl"><span>Confiança</span><span id="win-cp">0%</span></div>
+        <div class="conf-track"><div class="conf-fill" id="win-cf" style="width:0%;background:var(--win)"></div></div>
+      </div>
+    </div>
+
+    <div class="sig-card wdo-card">
+      <div class="sig-title wdo-title">Mini Dolar — WDO</div>
+      <div id="wdo-badge"><span class="badge badge-idle">AGUARDANDO</span></div>
+      <div class="rows">
+        <div class="row"><span class="row-k">Entrada</span><span id="wdo-ent">—</span></div>
+        <div class="row"><span class="row-k">Stop</span><span class="dn" id="wdo-stp">—</span></div>
+        <div class="row"><span class="row-k">Alvo 1</span><span class="up" id="wdo-a1">—</span></div>
+        <div class="row"><span class="row-k">Alvo 2</span><span class="up" id="wdo-a2">—</span></div>
+        <div class="row"><span class="row-k">R/R</span><span id="wdo-rr">—</span></div>
+      </div>
+      <div class="conf-wrap">
+        <div class="conf-lbl"><span>Confiança</span><span id="wdo-cp">0%</span></div>
+        <div class="conf-track"><div class="conf-fill" id="wdo-cf" style="width:0%;background:var(--wdo)"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-card">
+      <div class="info-label">Bias macro</div>
+      <div class="info-body" id="bias-macro">Execute a coleta para ver o cenario macro.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-label">Padroes de candle</div>
+      <div class="info-body" id="candles-info">Aguardando dados de mercado.</div>
+    </div>
+    <div class="info-card">
+      <div class="info-label">Correlacoes</div>
+      <div class="info-body" id="correlacoes">Sera exibido apos analise.</div>
+    </div>
+  </div>
+
   <div class="card">
-    <div class="card-title">Padrões de Candle <span class="tag tag-candle">IA</span></div>
-    <div id="candles-info" style="font-size:12px;line-height:1.8;color:var(--muted)">
-      Aguardando dados de mercado para identificar padrões.
-    </div>
-  </div>
-
-  <!-- CORRELAÇÕES -->
-  <div class="card">
-    <div class="card-title">Correlações detectadas</div>
-    <div id="correlacoes" style="font-size:12px;line-height:1.8;color:var(--muted)">
-      As correlações entre ativos serão exibidas aqui após a análise.
-    </div>
-  </div>
-
-  <!-- CONSOLE -->
-  <div class="card console-card">
-    <div class="card-title">Log do sistema / Saída da IA</div>
-    <div id="console-output">
-      <div><span class="line-info">Sistema B3 Macro Analyzer iniciado.</span></div>
-      <div><span class="line-info">Clique em "COLETAR DADOS" para buscar os ativos, depois "ANALISAR COM IA".</span></div>
-      <div><span class="line-time">&gt; </span><span class="line-warn">Nota: </span><span>Para dados em tempo real via ADVFN, a API da corretora ou uma extensão de scraping é necessária. Este sistema usa dados simulados + análise real da IA.</span></div>
+    <div class="card-title">Log do sistema / Saida da IA</div>
+    <div class="console" id="con">
+      <div><span class="l-info">Sistema B3 Macro Analyzer iniciado.</span></div>
+      <div><span class="l-ts">&gt; </span>Clique em "Coletar dados" e depois "Analisar com IA".</div>
     </div>
   </div>
 
 </div>
 
-<div class="footer-log">
+<div class="footer">
   <span id="footer-status">Pronto.</span>
-  <span>Modelo: claude-sonnet-4-20250514 · Especialidade: Macro B3 + Candles</span>
+  <span>Modelo: claude-sonnet-4-20250514 · Protocolos 4.0 + 5.0 + 6.0 + Candles</span>
 </div>
 
 <script>
-// ==========================================
-// ESTADO DO SISTEMA
-// ==========================================
-let dadosMercado = {};
-let autoInterval = null;
-let autoAtivo = false;
-let ultimaAnalise = null;
-
 const ATIVOS_CONFIG = [
-  { id: 'IFNC',    nome: 'IFNC',       categoria: 'indice',    yf: 'IFNC.SA',  unidade: 'pts' },
-  { id: 'IMAT',    nome: 'IMAT',       categoria: 'indice',    yf: 'IMAT.SA',  unidade: 'pts' },
-  { id: 'DI1',     nome: 'DI1 (proxy)',     categoria: 'juros',     yf: '%5EIRX',unidade: '%'   },
-  { id: 'SP500',   nome: 'S&P 500',    categoria: 'externo',   yf: '^GSPC',    unidade: 'pts' },
-  { id: 'BRENT',   nome: 'Brent',      categoria: 'commodity', yf: 'BZ=F',     unidade: 'USD' },
-  { id: 'OURO',    nome: 'Ouro',       categoria: 'commodity', yf: 'GLD',     unidade: 'USD' },
+  {id:'IFNC', nome:'IFNC',    uni:'pts'},
+  {id:'IMAT', nome:'IMAT',    uni:'pts'},
+  {id:'DI1',  nome:'DI1',     uni:'%'},
+  {id:'SP500',nome:'S&P 500', uni:'pts'},
+  {id:'BRENT',nome:'Brent',   uni:'usd'},
+  {id:'OURO', nome:'Ouro',    uni:'usd'},
 ];
+let mkt = {};
+let autoAtivo = false;
+let autoInterval = null;
 
-// ==========================================
-// CLOCK
-// ==========================================
-function updateClock() {
-  const now = new Date();
-  document.getElementById('clock').textContent =
-    now.toLocaleTimeString('pt-BR') + ' BRT';
+setInterval(()=>{ document.getElementById('clock').textContent = new Date().toLocaleTimeString('pt-BR')+' BRT'; },1000);
+
+function fmt(v,uni){
+  if(v==null) return '—';
+  if(uni==='pts') return Math.round(v).toLocaleString('pt-BR');
+  if(uni==='%')   return v.toFixed(2)+'%';
+  if(uni==='usd') return 'U$ '+v.toFixed(2);
+  return v;
 }
-setInterval(updateClock, 1000);
-updateClock();
 
-// ==========================================
-// RENDER ATIVOS
-// ==========================================
-function renderAtivos() {
-  const grid = document.getElementById('ativos-grid');
-  grid.innerHTML = ATIVOS_CONFIG.map(a => {
-    const d = dadosMercado[a.id] || {};
-    const val = d.preco ? formatNum(d.preco, a.unidade) : '—';
-    const varPct = d.variacao !== undefined ? d.variacao : null;
-    let varClass = 'var-neu', varTxt = '—';
-    if (varPct !== null) {
-      varClass = varPct >= 0 ? 'var-pos' : 'var-neg';
-      varTxt = (varPct >= 0 ? '+' : '') + varPct.toFixed(2) + '%';
-    }
-    const statusTxt = d.fonte ? `via ${d.fonte}` : 'aguardando';
-    return `<div class="ativo-box">
-      <div class="ativo-nome">${a.nome}</div>
-      <div class="ativo-valor">${val}</div>
-      <div class="ativo-var ${varClass}">${varTxt}</div>
-      <div class="ativo-status">${statusTxt}</div>
-    </div>`;
+function renderAtivos(){
+  document.getElementById('ativos-grid').innerHTML = ATIVOS_CONFIG.map(a=>{
+    const d=mkt[a.id]||{};
+    const v=d.preco!=null?fmt(d.preco,a.uni):'—';
+    const c=d.variacao!=null?d.variacao:null;
+    const cls=c==null?'nu':c>=0?'up':'dn';
+    const ct=c==null?'—':(c>=0?'+':'')+c.toFixed(2)+'%';
+    const src=d.fonte||'aguardando';
+    return `<div class="ativo-box"><div class="ativo-nome">${a.nome}</div><div class="ativo-val">${v}</div><div class="ativo-chg ${cls}">${ct}</div><div style="font-size:9px;color:var(--muted);margin-top:2px">${src}</div></div>`;
   }).join('');
 }
-
-function formatNum(n, unidade) {
-  if (unidade === 'pts') return n.toLocaleString('pt-BR', {maximumFractionDigits: 0});
-  if (unidade === '%') return n.toFixed(2) + '%';
-  if (unidade === 'USD') return 'U$ ' + n.toFixed(2);
-  return n.toString();
-}
-
 renderAtivos();
 
-// ==========================================
-// COLETAR DADOS
-// Tenta CORS proxy → ADVFN / Yahoo Finance
-// Se bloqueado, usa simulação realista
-// ==========================================
-async function coletarDados() {
-  const btn = document.getElementById('btn-coletar');
-  btn.disabled = true;
-  btn.textContent = '⏳ COLETANDO...';
-  setMainStatus('coletando');
-  logLine('info', 'Coletando dados via backend Vercel...');
-  document.getElementById('footer-status').textContent = 'Coletando dados...';
+function log(tipo,txt){
+  const el=document.getElementById('con');
+  const ts=new Date().toLocaleTimeString('pt-BR');
+  const d=document.createElement('div');
+  if(tipo==='sec') d.innerHTML=`<span class="l-sec">${txt}</span>`;
+  else d.innerHTML=`<span class="l-ts">[${ts}] </span><span class="l-${tipo}">${txt}</span>`;
+  el.appendChild(d); el.scrollTop=el.scrollHeight;
+}
+function limpar(){ document.getElementById('con').innerHTML=''; log('info','Console limpo.'); }
 
-  try {
-    const res = await fetch('/api/analyze', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'coletar' })
-    });
-    const json = await res.json();
-    const dados = json.dados || {};
-    let coletados = 0;
-    Object.entries(dados).forEach(([id, d]) => {
-      dadosMercado[id] = d;
-      coletados++;
-      const uni = d.uni || '';
-      const val = uni === '%' ? d.preco.toFixed(2) + '%' : uni === 'usd' ? 'U$ ' + d.preco.toFixed(2) : Math.round(d.preco).toLocaleString('pt-BR');
-      logLine('ok', `✓ ${d.nome}: ${val} (${d.variacao >= 0 ? '+' : ''}${d.variacao.toFixed(2)}%) via ${d.fonte}`);
-    });
-    if (json.erros?.length) json.erros.forEach(e => logLine('warn', '⚠ ' + e));
-    renderAtivos();
-    logLine('ok', `Coleta concluída. ${coletados}/6 ativos coletados.`);
-  } catch (err) {
-    logLine('err', 'Erro na coleta: ' + err.message);
-  }
-
-  btn.disabled = false;
-  btn.textContent = '▶ COLETAR DADOS';
-  document.getElementById('btn-analisar').disabled = false;
-  setMainStatus('pronto');
-  document.getElementById('footer-status').textContent = `Dados coletados às ${new Date().toLocaleTimeString('pt-BR')}`;
+function setStatus(s){
+  const dot=document.getElementById('main-dot');
+  const lbl=document.getElementById('status-label');
+  dot.className='status-dot';
+  if(s==='col'){ dot.classList.add('dot-warn','blink'); lbl.innerHTML='<span class="status-dot dot-warn blink"></span>Coletando...'; }
+  else if(s==='an'){ dot.classList.add('dot-warn','blink'); lbl.innerHTML='<span class="status-dot dot-warn blink"></span>Analisando...'; }
+  else if(s==='ok'){ dot.classList.add('dot-ok'); lbl.innerHTML='<span class="status-dot dot-ok"></span>Ativo'; }
+  else { dot.classList.add('dot-off'); lbl.innerHTML='<span class="status-dot dot-off"></span>Aguardando'; }
 }
 
-// ==========================================
-// ANÁLISE COM CLAUDE API (via backend)
-// ==========================================
-async function rodarAnalise() {
-  const btn = document.getElementById('btn-analisar');
-  btn.disabled = true;
-  btn.textContent = '⚡ ANALISANDO...';
-  setMainStatus('analisando');
-  logLine('info', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  logLine('info', 'Iniciando análise macroeconômica com IA...');
-
-  const spinner = adicionarSpinner();
-
+async function coletarDados(){
+  const btn=document.getElementById('btn-col');
+  btn.disabled=true; btn.textContent='⏳ Coletando...';
+  setStatus('col');
+  log('info','Coletando dados via backend Vercel...');
+  document.getElementById('footer-status').textContent='Coletando dados...';
   try {
-    const res = await fetch('/api/analyze', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'analyze' })
+    const res=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'coletar'})});
+    const json=await res.json();
+    const dados=json.dados||{};
+    let ok=0;
+    Object.entries(dados).forEach(([id,d])=>{
+      mkt[id]=d; ok++;
+      const uni=d.uni||'pts';
+      const val=uni==='%'?d.preco.toFixed(2)+'%':uni==='usd'?'U$ '+d.preco.toFixed(2):Math.round(d.preco).toLocaleString('pt-BR');
+      log('ok',`✓ ${d.nome||id}: ${val} (${d.variacao>=0?'+':''}${d.variacao.toFixed(2)}%) via ${d.fonte}`);
     });
-    spinner.remove();
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const json = await res.json();
-
-    const dados = json.dados || {};
-    Object.entries(dados).forEach(([id, d]) => { dadosMercado[id] = d; });
+    if(json.erros?.length) json.erros.forEach(e=>log('warn','⚠ '+e));
     renderAtivos();
+    log('ok',`Coleta concluida. ${ok}/6 ativos.`);
+  } catch(err){ log('err','Erro: '+err.message); }
+  btn.disabled=false; btn.textContent='▶ Coletar dados';
+  document.getElementById('btn-an').disabled=false;
+  setStatus('ok');
+  document.getElementById('footer-status').textContent=`Dados coletados às ${new Date().toLocaleTimeString('pt-BR')}`;
+}
 
-    const claudeData = json.claude;
-    const texto = claudeData?.content?.map(b => b.text || '').join('') || '';
-    if (!texto) throw new Error(claudeData?.error?.message || 'Resposta vazia da IA');
-
-    ultimaAnalise = texto;
+async function rodarAnalise(){
+  const btn=document.getElementById('btn-an');
+  btn.disabled=true; btn.textContent='⚡ Analisando...';
+  setStatus('an');
+  log('sec','── ANALISE MACRO + PROTOCOLOS 4.0/5.0/6.0 ──');
+  log('info','Enviando para Claude...');
+  const el=document.getElementById('con');
+  const sp=document.createElement('div');
+  sp.id='sp'; sp.innerHTML='<span class="spin"></span><span class="l-info">Processando...</span>';
+  el.appendChild(sp); el.scrollTop=el.scrollHeight;
+  try {
+    const res=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'analyze'})});
+    document.getElementById('sp')?.remove();
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const json=await res.json();
+    const dados=json.dados||{};
+    Object.entries(dados).forEach(([id,d])=>{ mkt[id]=d; });
+    renderAtivos();
+    const claudeData=json.claude;
+    const texto=claudeData?.content?.map(b=>b.text||'').join('')||'';
+    if(!texto) throw new Error(claudeData?.error?.message||'Resposta vazia');
     processarResposta(texto);
-    logLine('ok', 'Análise concluída com sucesso.');
-    document.getElementById('footer-status').textContent = `Última análise: ${new Date().toLocaleTimeString('pt-BR')}`;
-
-  } catch (err) {
-    spinner.remove();
-    logLine('err', 'Erro: ' + err.message);
+    log('ok','Analise concluida.');
+    document.getElementById('footer-status').textContent=`Ultima analise: ${new Date().toLocaleTimeString('pt-BR')}`;
+  } catch(err){
+    document.getElementById('sp')?.remove();
+    log('err','Erro: '+err.message);
   }
-
-  btn.disabled = false;
-  btn.textContent = '⚡ ANALISAR COM IA';
-  setMainStatus('pronto');
+  btn.disabled=false; btn.textContent='⚡ Analisar com IA';
+  setStatus('ok');
 }
 
-// ==========================================
-// PROMPT ESPECIALIZADO
-// ==========================================
-const SYSTEM_PROMPT = `Você é um analista quantitativo especializado na B3, com expertise em:
-- Análise macroeconômica correlacionada (DI1, Ibovespa setores, S&P500, commodities)
-- Leitura de fluxo e correlações entre ativos
-- Padrões de candles japoneses e price action
-- Operação em mini contratos: WIN (Mini Índice) e WDO (Mini Dólar)
+function processarResposta(texto){
+  let j;
+  try { j=JSON.parse(texto.replace(/```json|```/g,'').trim()); }
+  catch(e){ log('warn','Resposta: '+texto.slice(0,200)); return; }
 
-Ao receber dados de mercado, você deve:
-1. Avaliar o contexto macro (juros DI1 vs IFNC/IMAT, correlação SP500 com Ibovespa, Brent/Ouro como risk-off/risk-on)
-2. Identificar o bias direcional (alta/baixa/neutro) para WIN e WDO separadamente
-3. Sugerir o melhor ponto de entrada com base nos níveis técnicos inferidos
-4. Calcular stop e alvos com relação risco/retorno mínimo de 1:2
+  // Bias macro com campos do Protocolo 5.0
+  const sc=j.score_macro; const travas=j.travas_ativas||[];
+  const regiao=j.regiao_operacional||''; const tipoDia=j.tipo_dia||'';
+  const bloco=j.bloco_horario||''; const alerta=j.alerta_operacional||'';
+  const tipoEntrada=j.tipo_entrada||''; const qualidade=j.qualidade_setup||'';
 
-RESPONDA SEMPRE NO SEGUINTE FORMATO JSON (sem markdown, apenas JSON puro):
-{
-  "bias_macro": "texto descrevendo o cenário macro em 2-3 frases",
-  "correlacoes": ["correlação 1", "correlação 2", "correlação 3"],
-  "padroes_candle": "descrição dos padrões identificados com base nos dados",
-  "WIN": {
-    "direcao": "LONG" ou "SHORT" ou "NEUTRO",
-    "entrada": numero,
-    "stop": numero,
-    "alvo1": numero,
-    "alvo2": numero,
-    "risco_retorno": "1:X",
-    "confianca": numero entre 0 e 100,
-    "justificativa": "frase curta"
-  },
-  "WDO": {
-    "direcao": "LONG" ou "SHORT" ou "NEUTRO",
-    "entrada": numero,
-    "stop": numero,
-    "alvo1": numero,
-    "alvo2": numero,
-    "risco_retorno": "1:X",
-    "confianca": numero entre 0 e 100,
-    "justificativa": "frase curta"
+  const corScore=sc>=3?'var(--accent2)':sc<=-3?'var(--danger)':'var(--warn)';
+  const txtScore=sc>=3?'COMPRADOR':sc<=-3?'VENDEDOR':'NEUTRO';
+  const corRegiao=regiao==='A+'?'var(--accent2)':regiao==='A'?'var(--warn)':'var(--danger)';
+  const corAlerta=alerta==='Qualidade'?'var(--accent2)':alerta==='Perigo'?'var(--danger)':'var(--warn)';
+
+  let biasHtml='';
+  if(sc!==undefined||tipoDia){
+    biasHtml+=`<div style="margin-bottom:4px"><span style="color:${corScore};font-weight:bold">Score: ${sc>0?'+':''}${sc} ${txtScore}</span>`;
+    if(tipoDia) biasHtml+=` <span style="color:var(--muted);font-size:10px">| Dia ${tipoDia}</span>`;
+    if(bloco)   biasHtml+=` <span style="color:var(--muted);font-size:10px">| ${bloco}</span>`;
+    biasHtml+='</div>';
   }
-}`;
+  biasHtml+=`<div style="font-size:10px;margin-bottom:4px;display:flex;gap:8px;flex-wrap:wrap">`;
+  if(regiao) biasHtml+=`<span>Região: <span style="color:${corRegiao};font-weight:bold">${regiao}</span></span>`;
+  if(alerta) biasHtml+=`<span style="color:${corAlerta}">| ${alerta}</span>`;
+  if(tipoEntrada&&tipoEntrada!=='N/A') biasHtml+=`<span style="color:var(--accent)">| ${tipoEntrada}</span>`;
+  if(qualidade) biasHtml+=`<span style="color:var(--muted)">| Setup: ${qualidade}</span>`;
+  biasHtml+='</div>';
+  if(travas.length) biasHtml+=`<div style="color:var(--danger);font-size:10px;margin-bottom:3px">⚠ ${travas.join(' | ')}</div>`;
+  else if(sc!==undefined) biasHtml+=`<div style="color:var(--accent2);font-size:10px;margin-bottom:3px">✓ Sem travas</div>`;
+  if(j.checklist_resultado) biasHtml+=`<div style="color:var(--muted);font-size:10px;margin-bottom:3px">Checklist: ${j.checklist_resultado}</div>`;
+  if(j.bias_macro) biasHtml+=`<div style="font-size:11px;color:var(--text);line-height:1.6;margin-top:4px">${j.bias_macro}</div>`;
+  document.getElementById('bias-macro').innerHTML=biasHtml;
 
-// ==========================================
-// MONTAR CONTEXTO
-// ==========================================
-function montarContexto() {
-  const linhas = ['DADOS DE MERCADO — ' + new Date().toLocaleString('pt-BR') + ' (BRT)', ''];
-  ATIVOS_CONFIG.forEach(a => {
-    const d = dadosMercado[a.id];
-    if (d) {
-      const var_ = d.variacao >= 0 ? '+' + d.variacao.toFixed(2) : d.variacao.toFixed(2);
-      linhas.push(`${a.nome}: ${formatNum(d.preco, a.unidade)} (${var_}%) — fonte: ${d.fonte}`);
-    }
-  });
-  linhas.push('');
-  linhas.push('Hora do pregão: ' + new Date().toLocaleTimeString('pt-BR'));
-  linhas.push('Analise o contexto macroeconômico e forneça os melhores pontos de entrada para WIN e WDO.');
-  return linhas.join('\n');
+  log('info',`Dia: ${tipoDia} | ${bloco} | Score: ${sc>0?'+':''}${sc} (${txtScore}) | Região: ${regiao}`);
+  if(travas.length) log('warn','Travas: '+travas.join(' | '));
+  else log('ok','Sem travas operacionais');
+  if(j.bias_macro) log('ai',j.bias_macro);
+
+  if(j.correlacoes){
+    document.getElementById('correlacoes').innerHTML=j.correlacoes.map(c=>`<div>▸ ${c}</div>`).join('');
+    log('sec','── CORRELACOES ──');
+    j.correlacoes.forEach(c=>log('ai','▸ '+c));
+  }
+  if(j.padroes_candle) document.getElementById('candles-info').innerHTML=`<span style="color:var(--text)">${j.padroes_candle}</span>`;
+
+  if(j.WIN) aplicarSinal('win',j.WIN,'WIN');
+  if(j.WDO) aplicarSinal('wdo',j.WDO,'WDO');
 }
 
-// ==========================================
-// PROCESSAR RESPOSTA DA IA
-// ==========================================
-function processarResposta(texto) {
-  let json;
-  try {
-    const limpo = texto.replace(/```json|```/g, '').trim();
-    json = JSON.parse(limpo);
-  } catch (e) {
-    logLine('ai', texto);
-    return;
-  }
-
-  // Score macro + travas + região (Protocolo 4.0)
-  const sc = json.score_macro;
-  const travas = json.travas_ativas || [];
-  const regiao = json.regiao_operacional || '';
-  const tipoDia = json.tipo_dia || '';
-  const bloco = json.bloco_horario || '';
-  const alerta = json.alerta_operacional || '';
-  const tipoEntrada = json.tipo_entrada || '';
-
-  const corScore = sc >= 3 ? 'var(--accent2)' : sc <= -3 ? 'var(--danger)' : 'var(--warn)';
-  const txtScore = sc >= 3 ? 'COMPRADOR' : sc <= -3 ? 'VENDEDOR' : 'NEUTRO';
-  const corRegiao = regiao === 'A+' ? 'var(--accent2)' : regiao === 'A' ? 'var(--warn)' : 'var(--danger)';
-  const corAlerta = alerta === 'Qualidade' ? 'var(--accent2)' : alerta === 'Perigo' ? 'var(--danger)' : 'var(--warn)';
-  const corBloco = bloco === 'Abertura' ? 'var(--accent2)' : bloco === 'Tarde' ? 'var(--win)' : 'var(--muted)';
-
-  let biasHtml = '';
-  // Linha 1: Score + Tipo do dia
-  if (sc !== undefined || tipoDia) {
-    biasHtml += `<div style="display:flex;gap:10px;margin-bottom:5px;flex-wrap:wrap">`;
-    if (sc !== undefined) biasHtml += `<span style="color:${corScore};font-weight:bold">Score: ${sc > 0 ? '+' : ''}${sc} ${txtScore}</span>`;
-    if (tipoDia) biasHtml += `<span style="color:var(--muted);font-size:11px">| Dia ${tipoDia}</span>`;
-    if (bloco) biasHtml += `<span style="color:${corBloco};font-size:11px">| ${bloco}</span>`;
-    biasHtml += `</div>`;
-  }
-  // Linha 2: Região + Alerta + Tipo entrada
-  biasHtml += `<div style="display:flex;gap:8px;margin-bottom:5px;flex-wrap:wrap;font-size:11px">`;
-  if (regiao) biasHtml += `<span>Região: <span style="color:${corRegiao};font-weight:bold">${regiao}</span></span>`;
-  if (alerta) biasHtml += `<span style="color:${corAlerta}">| ${alerta}</span>`;
-  if (tipoEntrada && tipoEntrada !== 'N/A') biasHtml += `<span style="color:var(--acc)">| ${tipoEntrada}</span>`;
-  biasHtml += `</div>`;
-  // Linha 3: Travas
-  if (travas.length) biasHtml += `<div style="color:var(--danger);font-size:11px;margin-bottom:4px">⚠ ${travas.join(' | ')}</div>`;
-  else if (sc !== undefined) biasHtml += `<div style="color:var(--accent2);font-size:11px;margin-bottom:4px">✓ Sem travas</div>`;
-  // Linha 4: Bias texto
-  if (json.bias_macro) biasHtml += `<div style="font-size:11px;color:var(--text);line-height:1.6">${json.bias_macro}</div>`;
-  if (biasHtml) document.getElementById('bias-macro').innerHTML = biasHtml;
-
-  logLine('section', '── PROTOCOLOS 4.0 + 5.0 ──');
-  if (tipoDia) logLine('ai', `Dia ${tipoDia} | ${bloco} | Região ${regiao} | ${alerta}`);
-  if (sc !== undefined) logLine('ai', `Score Macro: ${sc > 0 ? '+' : ''}${sc} (${txtScore})`);
-  if (tipoEntrada && tipoEntrada !== 'N/A') logLine('info', `Tipo de entrada: ${tipoEntrada}`);
-  if (travas.length) logLine('warn', `Travas: ${travas.join(' | ')}`);
-  else logLine('ok', 'Sem travas operacionais');
-  if (json.bias_macro) logLine('ai', json.bias_macro);
-
-  // Correlações
-  if (json.correlacoes) {
-    document.getElementById('correlacoes').innerHTML =
-      json.correlacoes.map(c => `<div style="color:var(--text);margin-bottom:4px">▸ ${c}</div>`).join('');
-    logLine('section', '── CORRELAÇÕES ──');
-    json.correlacoes.forEach(c => logLine('ai', '▸ ' + c));
-  }
-
-  // Candles
-  if (json.padroes_candle) {
-    document.getElementById('candles-info').innerHTML =
-      `<span style="color:var(--text)">${json.padroes_candle}</span>`;
-  }
-
-  // WIN
-  // Qualidade do setup e checklist (Protocolo 6.0)
-  if (json.qualidade_setup || json.checklist_resultado) {
-    const qCor = json.qualidade_setup === 'A+' ? 'var(--accent2)' : json.qualidade_setup === 'A' ? 'var(--warn)' : 'var(--danger)';
-    let extra = '';
-    if (json.qualidade_setup) extra += `<div style="font-size:11px;margin-bottom:3px">Qualidade setup: <span style="color:${qCor};font-weight:bold">${json.qualidade_setup}</span></div>`;
-    if (json.checklist_resultado) extra += `<div style="font-size:11px;margin-bottom:3px;color:var(--muted)">Checklist: ${json.checklist_resultado}</div>`;
-    if (json.limite_trades) extra += `<div style="font-size:11px;color:var(--muted)">${json.limite_trades}</div>`;
-    const candle = document.getElementById('candles-info');
-    if (candle) candle.innerHTML = (extra ? extra + '<div style="margin-top:6px">' : '') + (json.padroes_candle || '') + (extra ? '</div>' : '');
-    logLine('info', `Setup: ${json.qualidade_setup || '—'} | Checklist: ${json.checklist_resultado || '—'}`);
-  }
-
-  if (json.WIN) atualizarSinal('win', json.WIN, 'WIN');
-  if (json.WDO) atualizarSinal('wdo', json.WDO, 'WDO');
+function aplicarSinal(p,d,nome){
+  const dir=d.direcao||'NEUTRO';
+  const bc=dir==='LONG'?'badge-long':dir==='SHORT'?'badge-short':'badge-idle';
+  const bt=dir==='LONG'?'▲ COMPRA (LONG)':dir==='SHORT'?'▼ VENDA (SHORT)':'NEUTRO';
+  document.getElementById(p+'-badge').innerHTML=`<span class="badge ${bc}">${bt}</span>`;
+  const fv=v=>v?Math.round(v).toLocaleString('pt-BR'):'—';
+  document.getElementById(p+'-ent').textContent=fv(d.entrada);
+  document.getElementById(p+'-stp').textContent=fv(d.stop);
+  document.getElementById(p+'-a1').textContent=fv(d.alvo1);
+  document.getElementById(p+'-a2').textContent=fv(d.alvo2);
+  document.getElementById(p+'-rr').textContent=d.risco_retorno||'—';
+  const c=d.confianca||0;
+  document.getElementById(p+'-cp').textContent=c+'%';
+  document.getElementById(p+'-cf').style.width=c+'%';
+  log('sec',`── ${nome} — ${dir} ──`);
+  log('ai',`Entrada: ${fv(d.entrada)} | Stop: ${fv(d.stop)} | A1: ${fv(d.alvo1)} | R/R: ${d.risco_retorno} | Conf: ${c}%`);
+  if(d.justificativa) log('ai','» '+d.justificativa);
 }
 
-function atualizarSinal(prefix, dados, nome) {
-  const { direcao, entrada, stop, alvo1, alvo2, risco_retorno, confianca, justificativa } = dados;
-
-  // Badge
-  let badgeClass = 'signal-aguarda', badgeText = 'NEUTRO';
-  if (direcao === 'LONG') { badgeClass = 'signal-long'; badgeText = '▲ COMPRA (LONG)'; }
-  else if (direcao === 'SHORT') { badgeClass = 'signal-short'; badgeText = '▼ VENDA (SHORT)'; }
-  document.getElementById(prefix + '-signal').innerHTML =
-    `<span class="signal-badge ${badgeClass}">${badgeText}</span>`;
-
-  // Valores
-  const fmt = v => v ? v.toLocaleString('pt-BR') : '—';
-  document.getElementById(prefix + '-entrada').textContent = fmt(entrada);
-  document.getElementById(prefix + '-stop').textContent = fmt(stop);
-  document.getElementById(prefix + '-alvo1').textContent = fmt(alvo1);
-  document.getElementById(prefix + '-alvo2').textContent = fmt(alvo2);
-  document.getElementById(prefix + '-rr').textContent = risco_retorno || '—';
-
-  // Confiança
-  const conf = confianca || 0;
-  document.getElementById(prefix + '-conf-pct').textContent = conf + '%';
-  document.getElementById(prefix + '-conf-bar').style.width = conf + '%';
-
-  // Log
-  logLine('section', `── ${nome} — ${direcao} ──`);
-  logLine('ai', `Entrada: ${fmt(entrada)} | Stop: ${fmt(stop)} | Alvo 1: ${fmt(alvo1)} | Alvo 2: ${fmt(alvo2)}`);
-  logLine('ai', `R/R: ${risco_retorno} | Confiança: ${conf}%`);
-  if (justificativa) logLine('ai', `» ${justificativa}`);
-}
-
-// ==========================================
-// INSTRUCOES PARA PRODUCAO
-// ==========================================
-function mostrarInstrucoes() {
-  logLine('section', '── COMO COLOCAR EM PRODUÇÃO ──');
-  logLine('info', 'OPÇÃO 1 — Vercel Edge Function (gratuito, 5 min para subir):');
-  logLine('ai',  '  1. Crie conta em vercel.com');
-  logLine('ai',  '  2. Crie arquivo /api/analyze.js com o proxy para Anthropic API');
-  logLine('ai',  '  3. Adicione ANTHROPIC_API_KEY nas variáveis de ambiente');
-  logLine('ai',  '  4. Aponte este HTML para sua URL da Vercel');
-  logLine('info', 'OPÇÃO 2 — Python local (FastAPI):');
-  logLine('ai',  '  pip install fastapi uvicorn anthropic yfinance httpx');
-  logLine('ai',  '  uvicorn main:app --reload --port 8000');
-  logLine('info', 'OPÇÃO 3 — API da corretora (XP, Rico, Clear via MT5 ou DLL):');
-  logLine('ai',  '  Substitua fetchYahooFinance() pela chamada da API da sua corretora');
-}
-
-// ==========================================
-// HELPERS DE UI
-// ==========================================
-function logLine(tipo, texto) {
-  const out = document.getElementById('console-output');
-  const div = document.createElement('div');
-  const ts = new Date().toLocaleTimeString('pt-BR');
-
-  if (tipo === 'section') {
-    div.innerHTML = `<span class="section-header">${texto}</span>`;
+function autoRefresh(){
+  const btn=document.getElementById('btn-auto');
+  if(autoAtivo){
+    clearInterval(autoInterval); autoAtivo=false;
+    btn.textContent='↻ Auto (30s)'; btn.style.color='';
+    log('warn','Auto-refresh desativado.');
   } else {
-    div.innerHTML = `<span class="line-time">[${ts}] </span><span class="line-${tipo}">${texto}</span>`;
-  }
-  out.appendChild(div);
-  out.scrollTop = out.scrollHeight;
-}
-
-function adicionarSpinner() {
-  const out = document.getElementById('console-output');
-  const div = document.createElement('div');
-  div.id = 'spinner-line';
-  div.innerHTML = `<span class="loading-spinner"></span><span class="line-info">Processando análise macroeconômica...</span>`;
-  out.appendChild(div);
-  out.scrollTop = out.scrollHeight;
-  return div;
-}
-
-function limparConsole() {
-  document.getElementById('console-output').innerHTML = '';
-  logLine('info', 'Console limpo.');
-}
-
-function setMainStatus(status) {
-  const dot = document.getElementById('main-dot');
-  const label = document.getElementById('status-label');
-  dot.className = 'status-dot';
-  if (status === 'coletando') { dot.classList.add('dot-warn'); label.innerHTML = '<span class="status-dot dot-warn"></span>Coletando dados...'; }
-  else if (status === 'analisando') { dot.classList.add('dot-warn'); label.innerHTML = '<span class="status-dot dot-warn" style="animation:pulse 0.5s infinite"></span>Analisando...'; }
-  else if (status === 'pronto') { dot.classList.add('dot-ok'); label.innerHTML = '<span class="status-dot dot-ok"></span>Ativo'; }
-  else { label.innerHTML = '<span class="status-dot dot-off"></span>Aguardando'; }
-}
-
-function autoRefresh() {
-  const btn = document.getElementById('btn-auto');
-  if (autoAtivo) {
-    clearInterval(autoInterval);
-    autoAtivo = false;
-    btn.textContent = '↻ AUTO (30s)';
-    btn.style.color = '';
-    logLine('warn', 'Auto-refresh desativado.');
-  } else {
-    autoAtivo = true;
-    btn.textContent = '⏹ PARAR AUTO';
-    btn.style.color = 'var(--accent2)';
-    logLine('ok', 'Auto-refresh ativado (coleta a cada 30 segundos).');
-    autoInterval = setInterval(async () => {
-      await coletarDados();
-      if (document.getElementById('btn-analisar').disabled === false) {
-        await rodarAnalise();
-      }
-    }, 30000);
+    autoAtivo=true; btn.textContent='⏹ Parar auto'; btn.style.color='var(--accent2)';
+    log('ok','Auto-refresh ativado (30s).');
+    autoInterval=setInterval(async()=>{ await coletarDados(); await rodarAnalise(); },30000);
   }
 }
 </script>
-
 </body>
 </html>
