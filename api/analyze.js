@@ -303,7 +303,7 @@ async function coletarDados() {
   return { dados: resultado, erros };
 }
 
-async function montarContexto(dados, dadosProfit) {
+function montarContexto(dados, dadosProfit) {
   const linhas = [`DADOS DE MERCADO — ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })} (BRT)`, ''];
 
   // Dados do Profit (prioridade — tempo real)
@@ -362,7 +362,7 @@ export default async function handler(req) {
       const dadosProfit = body.dados_profit || {};
       const candles     = body.candles || {};
 
-      const contexto = await montarContexto(dados, dadosProfit);
+      const contexto = montarContexto(dados, dadosProfit);
       const contextoFinal = candles && Object.keys(candles).length > 0
         ? contexto + '\n\n=== CANDLES 1 MIN (Profit) ===\n' +
           Object.entries(candles).map(([nome, cs]) =>
@@ -378,7 +378,7 @@ export default async function handler(req) {
           'anthropic-version': '2023-06-01',
         },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
+          model: 'claude-sonnet-4-5',
           max_tokens: 1200,
           system: SYSTEM_PROMPT,
           messages: [{ role: 'user', content: contextoFinal }]
