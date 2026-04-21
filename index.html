@@ -312,12 +312,12 @@ function processarResposta(texto){
   log('info',`Dia: ${tipoDia} | ${bloco} | Score: ${sc>0?'+':''}${sc} (${txtScore}) | Região: ${regiao}`);
   if(travas.length) log('warn','Travas: '+travas.join(' | '));
   else log('ok','Sem travas operacionais');
-  if(j.bias_macro) log('ai',j.bias_macro);
+  if(j.bias_macro) log('info',j.bias_macro);
 
   if(j.correlacoes){
     document.getElementById('correlacoes').innerHTML=j.correlacoes.map(c=>`<div>▸ ${c}</div>`).join('');
     log('sec','── CORRELACOES ──');
-    j.correlacoes.forEach(c=>log('ai','▸ '+c));
+    j.correlacoes.forEach(c=>log('info','▸ '+c));
   }
   if(j.padroes_candle) document.getElementById('candles-info').innerHTML=`<span style="color:var(--text)">${j.padroes_candle}</span>`;
 
@@ -340,10 +340,11 @@ function aplicarSinal(p,d,nome){
   document.getElementById(p+'-cp').textContent=c+'%';
   document.getElementById(p+'-cf').style.width=c+'%';
   log('sec',`── ${nome} — ${dir} ──`);
-  log('ai',`Entrada: ${fv(d.entrada)} | Stop: ${fv(d.stop)} | A1: ${fv(d.alvo1)} | R/R: ${d.risco_retorno} | Conf: ${c}%`);
-  if(d.justificativa) log('ai','» '+d.justificativa);
+  log('info',`Entrada: ${fv(d.entrada)} | Stop: ${fv(d.stop)} | A1: ${fv(d.alvo1)} | R/R: ${d.risco_retorno} | Conf: ${c}%`);
+  if(d.justificativa) log('info','» '+d.justificativa);
 }
 
+let analisando = false;
 function autoRefresh(){
   const btn=document.getElementById('btn-auto');
   if(autoAtivo){
@@ -353,7 +354,13 @@ function autoRefresh(){
   } else {
     autoAtivo=true; btn.textContent='⏹ Parar auto'; btn.style.color='var(--accent2)';
     log('ok','Auto-refresh ativado (30s).');
-    autoInterval=setInterval(async()=>{ await coletarDados(); await rodarAnalise(); },30000);
+    autoInterval=setInterval(async()=>{
+      if(analisando) return; // evita chamadas simultâneas
+      analisando=true;
+      await coletarDados();
+      await rodarAnalise();
+      analisando=false;
+    },30000);
   }
 }
 </script>
