@@ -22,183 +22,91 @@ Score total: >= +3 ambiente comprador | <= -3 ambiente vendedor | neutro = reduz
 - IFNC + IMAT + DI alinhados = sinal forte
 
 ### REGIÕES OPERACIONAIS
-- Região A+: extremo do range (suporte ou resistência clara) = OPERAR
-- Região A: nível relevante próximo ao extremo = OPERAR COM CAUTELA
+- Região A+: extremo do range = OPERAR
+- Região A: nível relevante = OPERAR COM CAUTELA
 - Região B: meio do range = PROIBIDO OPERAR
 
-### TRAVAS OPERACIONAIS — PROIBIDO OPERAR QUANDO:
-- Preço no meio do range (Região B)
-- Macro fortemente contra a direção
-- Fluxo não validado
-- Após movimentos explosivos
-- VIX > 22 sem redução de lote
-- Eventos de alto impacto: Payroll, decisões de juros, eventos geopolíticos
+### TRAVAS OPERACIONAIS
+Proibido operar: meio do range, macro contra a direção, fluxo não validado, após movimentos explosivos, VIX > 22, eventos de alto impacto.
 
 ### GESTÃO DE RISCO 4.0
-- Stop técnico OBRIGATÓRIO
-- Parcial OBRIGATÓRIA no primeiro alvo
-- Após parcial: stop move para zero (break-even)
-- Nunca operar o primeiro movimento após evento de impacto
+Stop técnico obrigatório. Parcial obrigatória no primeiro alvo. Após parcial: break-even.
 
 ---
 
 ## PROTOCOLO 5.0 — TIMING, LIQUIDEZ, INTENÇÃO
 
-### TIMING INSTITUCIONAL
-- 09:00–10:30 (ABERTURA): maior volatilidade, definição de direção. Melhor janela.
-- 10:30–14:30 (MEIO): lateralização e ruído. Operar APENAS região A+.
-- 14:30–17:00 (TARDE): fluxo mais limpo. Segunda melhor janela.
+TIMING: 09:00–10:30 Abertura (melhor) | 10:30–14:30 Meio (só A+) | 14:30–17:00 Tarde (segunda melhor)
 
-### MAPEAMENTO DE LIQUIDEZ
-Sempre identificar onde está a liquidez que o mercado busca:
-1. Máxima e mínima do dia anterior
-2. Abertura do dia
-3. VWAP
-4. POC — região de maior volume
-5. Topos e fundos recentes
-Regra: preço ENTRE liquidez → NÃO operar. Preço INDO BUSCAR liquidez → operar a favor.
+LIQUIDEZ: Mapear máxima/mínima dia anterior, abertura, VWAP, POC, topos/fundos recentes.
+Regra: preço entre liquidez = NÃO operar. Indo buscar liquidez = operar a favor.
 
-### INTENÇÃO DO MOVIMENTO
-- SAUDÁVEL: continuidade, pouco pavio, volume acompanha.
-- FALSO/ARMADILHA: movimento rápido, rejeição, falta de continuidade.
-Regra: preço se move mas não continua → suspeitar de armadilha → EVITAR entrada.
+INTENÇÃO: Saudável = continuidade + volume. Armadilha = movimento rápido + rejeição.
 
-### CLASSIFICADOR DO DIA
-- DIA DIRECIONAL: tendência clara. Alta confiança.
-- DIA LATERAL: range definido. Operar nos extremos. Média confiança.
-- DIA DE EVENTO (Payroll, CPI, Copom): reduzir lote. Baixa confiança.
-- DIA DE RISCO (VIX alto): máxima cautela. Confiança muito baixa.
+CLASSIFICADOR: Direcional (alta conf) | Lateral (média conf) | Evento (baixa conf) | Risco (muito baixa)
 
-### ALERTAS OPERACIONAIS
-- BLOQUEIO: mercado no meio do range, sem liquidez próxima, volume não confirmado.
-- QUALIDADE: região A+, assimetria adequada, confluência macro.
-- PERIGO: VIX acelerando, DXY forte, yields mudando direção.
+ALERTAS: BLOQUEIO = não operar | QUALIDADE = operar | PERIGO = cautela máxima
 
-### CONTROLE DE FREQUÊNCIA
-- Máximo 2–3 trades de alta qualidade por dia.
-- Qualidade > Quantidade.
+Máximo 2–3 trades/dia. Qualidade > Quantidade.
 
 ---
 
-## PROTOCOLO 6.0 — EXECUÇÃO, COMPORTAMENTO E PERFORMANCE
+## PROTOCOLO 6.0 — COMPORTAMENTO E PERFORMANCE
 
-### CONTROLE DE ESTADO MENTAL
-- NEUTRO: operar normalmente.
-- LEVE: reduzir lote pela metade.
-- ALTERADO: PROIBIDO OPERAR.
-
-### TRAVAS COMPORTAMENTAIS
-- Após 2 losses seguidos: reduzir risco.
-- Após 3 losses: PARAR O DIA.
-- Após +2R no dia: parar ou reduzir drasticamente.
-
-### CLASSIFICAÇÃO DE TRADE
-- TRADE BOM: seguiu todas as regras — mesmo que dê prejuízo.
-- TRADE RUIM: quebrou alguma regra — mesmo que dê lucro.
-
-### PROTOCOLO PÓS-TRADE
-1. Segui o plano?
-2. Entrei na região correta (A+)?
-3. Respeitei o stop técnico?
-4. Havia justificativa clara?
-
-### PROTEÇÃO DE LUCRO
-- Se atingir +2R no dia: PARAR ou reduzir drasticamente.
-- Nunca devolver lucro ao mercado.
+Estado mental: Neutro = operar | Leve = reduzir lote | Alterado = PARAR.
+Travas: 2 losses = reduzir | 3 losses = parar o dia | +2R = parar ou reduzir.
+Trade bom = seguiu regras. Trade ruim = quebrou regras (mesmo com lucro).
+Proteção: atingiu +2R → parar. Nunca devolver lucro.
 
 ---
 
-## PROTOCOLO DE ENTRADA E SAÍDA
+## PROTOCOLO ENTRADA E SAÍDA
 
-### TIPOS DE ENTRADA
-TIPO 1 — REJEIÇÃO EM SUPORTE: preço chega em região forte e é rejeitado. Entrar após candle de rejeição. Stop abaixo do pavio.
-TIPO 2 — REJEIÇÃO EM RESISTÊNCIA: preço testa topo e falha. Entrar após rejeição. Stop acima do topo.
-TIPO 3 — ROMPIMENTO: NUNCA entrar direto. Aguardar pullback para o nível rompido.
-TIPO 4 — CONTINUAÇÃO EM TENDÊNCIA: entrar no pullback. Stop abaixo do último fundo (LONG) ou acima do último topo (SHORT).
-TIPO 5 — EXAUSTÃO: após movimento forte sem continuidade. Aguardar candle de reversão + confirmação.
+TIPOS: 1-Rejeição Suporte | 2-Rejeição Resistência | 3-Rompimento(pullback) | 4-Continuação | 5-Exaustão
+NÃO ENTRAR: meio do range, sem volume, macro contra, após explosivo, R/R < 1:2
 
-### QUANDO NÃO ENTRAR
-- Preço no meio do range
-- Volume fraco / fluxo não validado
-- Macro contra a direção
-- Após movimento explosivo sem consolidação
-- Sem assimetria favorável (R/R < 1:2)
-
-### CHECKLIST OBRIGATÓRIO (6/6 para operar)
-1. Macro alinhado?
-2. Correlação confirma?
-3. Volume validado?
-4. Região A+?
-5. Padrão claro?
-6. Assimetria >= 1:2?
+CHECKLIST 6/6: Macro✓ Correlação✓ Volume✓ Região A+✓ Padrão✓ Assimetria✓
 
 ---
 
-## BÍBLIA DO CANDLESTICK — PADRÕES
+## BÍBLIA DO CANDLESTICK
 
-ANATOMIA: Corpo longo = pressão forte. Corpo curto = indecisão. Sombra superior longa = rejeição vendedora. Sombra inferior longa = rejeição compradora.
-
-PADRÕES DE REVERSÃO:
-- ENGOLFO: 2o candle envolve o 1o. Bullish = fundo. Bearish = topo.
-- PIN BAR / MARTELO: cauda longa (2x o corpo). Bullish = cauda baixo. Bearish = cauda cima.
-- ESTRELA CADENTE: cauda superior longa, rejeição de resistência.
-- DOJI: abertura = fechamento. Dragonfly (cauda baixa) = suporte. Gravestone (cauda alta) = resistência.
-- ESTRELA DA MANHÃ: 3 candles (baixa forte + indecisão + alta forte) = reversão de fundo.
-- ESTRELA DA NOITE: 3 candles (alta forte + indecisão + baixa forte) = reversão de topo.
-- HARAMI (BARRA INTERNA): vela pequena dentro da vela mãe = consolidação.
-- PINÇAS: máximas iguais (topo) ou mínimas iguais (fundo) = reversão em nível-chave.
-- FALSO ROMPIMENTO: mercado rompe nível, busca stops, depois reverte forte.
-
-ESTRUTURA DE MERCADO:
-- TENDÊNCIA ALTA: topos e fundos ascendentes (HH + HL). Operar LONG no pullback.
-- TENDÊNCIA BAIXA: topos e fundos descendentes (LH + LL). Operar SHORT no pullback.
-- LATERAL: oscila entre suporte e resistência horizontais.
-- INSTÁVEL: sem direção clara. EVITAR operar.
-
-FIBONACCI: Retrações 38.2%, 50%, 61.8%. Alvos 100% e 161.8%.
-
-CONFLUÊNCIA: Mínimo 2 fatores para sinal válido. Quanto mais, maior a confiança.
+REVERSÃO: Engolfo, Pin Bar/Martelo, Estrela Cadente, Doji (Dragonfly/Gravestone), Estrela Manhã/Noite, Harami, Pinças, Falso Rompimento.
+ESTRUTURA: Alta=HH+HL | Baixa=LH+LL | Lateral=range | Instável=evitar.
+FIBONACCI: Retrações 38.2%, 50%, 61.8%. Alvos 100%, 161.8%.
 
 ---
 
-## INSTRUÇÕES DE ANÁLISE — SEGUIR NESTA ORDEM
+## INSTRUÇÕES — SEGUIR NESTA ORDEM
+1. Classificar o dia (Direcional/Lateral/Evento/Risco)
+2. Timing (Abertura/Meio/Tarde)
+3. Score macro
+4. Correlação Brasil (IFNC, IMAT, DI)
+5. Liquidez mapeada
+6. Intenção (saudável/armadilha)
+7. Região (A+/A/B)
+8. Tipo de entrada (1-5)
+9. Checklist 6/6
+10. Gestão (stop, parcial, break-even)
 
-1. CLASSIFICAR O DIA: Direcional / Lateral / Evento / Risco
-2. TIMING: identificar bloco horário (Abertura / Meio / Tarde)
-3. SCORE MACRO: calcular com base nos dados recebidos
-4. CORRELAÇÃO BRASIL: IFNC, IMAT, DI — alinhados ou divergentes?
-5. LIQUIDEZ: onde o mercado provavelmente busca liquidez?
-6. INTENÇÃO: movimento saudável ou armadilha?
-7. REGIÃO OPERACIONAL: A+, A ou B
-8. TIPO DE ENTRADA: qual dos 5 tipos é aplicável?
-9. CHECKLIST: 6/6 perguntas. Se qualquer NÃO → NEUTRO
-10. GESTÃO: stop técnico, parcial no alvo 1, break-even após parcial
+CONFIANÇA: 6/6+score±3+A++direcional+abertura/tarde = 85-95% | 5/6+2conf+A+ = 70-84% | meio/4/6/A = 50-69% | trava/evento/neutro = NEUTRO
 
-ESCALA DE CONFIANÇA:
-- Dia direcional + abertura/tarde + checklist 6/6 + score ±3+ + região A+ = 85-95%
-- Checklist 5/6 + 2 confluências + região A+ = 70-84%
-- Meio do dia OU checklist 4/6 OU região A = 50-69%
-- Dia de evento OU trava ativa OU score neutro = NEUTRO
+REGRAS: "Macro define direção. Técnico define entrada. Gestão define sobrevivência."
 
-REGRAS FINAIS:
-"Macro define direção. Técnico define entrada. Gestão define sobrevivência."
-"Operar pouco, operar bem e operar com contexto."
-"O sucesso não está em saber mais, mas em executar com consistência absoluta."
-
-RESPONDA APENAS COM JSON PURO (sem markdown, sem texto antes ou depois):
+RESPONDA APENAS JSON PURO (sem markdown):
 {
   "tipo_dia": "Direcional ou Lateral ou Evento ou Risco",
   "bloco_horario": "Abertura ou Meio ou Tarde",
   "score_macro": 0,
-  "travas_ativas": ["lista de travas ou array vazio"],
+  "travas_ativas": [],
   "alerta_operacional": "Bloqueio ou Qualidade ou Perigo",
   "regiao_operacional": "A+ ou A ou B",
   "tipo_entrada": "Rejeição Suporte ou Rejeição Resistência ou Rompimento ou Continuação ou Exaustão ou N/A",
   "qualidade_setup": "A+ ou A ou B ou Inválido",
-  "checklist_resultado": "6/6 ou X/6 — listar itens que falharam",
-  "bias_macro": "análise macro em 2-3 frases com timing e liquidez",
-  "correlacoes": ["correlação 1 com impacto direto", "correlação 2", "correlação 3"],
-  "padroes_candle": "padrão + intenção (saudável/armadilha) + liquidez mapeada",
+  "checklist_resultado": "6/6 ou X/6",
+  "bias_macro": "análise macro 2-3 frases",
+  "correlacoes": ["correlação 1", "correlação 2", "correlação 3"],
+  "padroes_candle": "padrão + intenção + liquidez",
   "WIN": {
     "direcao": "LONG ou SHORT ou NEUTRO",
     "entrada": 0,
@@ -207,7 +115,7 @@ RESPONDA APENAS COM JSON PURO (sem markdown, sem texto antes ou depois):
     "alvo2": 0,
     "risco_retorno": "1:X",
     "confianca": 0,
-    "justificativa": "tipo dia + bloco + tipo entrada + checklist + alertas"
+    "justificativa": "protocolo + confluências"
   },
   "WDO": {
     "direcao": "LONG ou SHORT ou NEUTRO",
@@ -217,181 +125,241 @@ RESPONDA APENAS COM JSON PURO (sem markdown, sem texto antes ou depois):
     "alvo2": 0,
     "risco_retorno": "1:X",
     "confianca": 0,
-    "justificativa": "tipo dia + bloco + tipo entrada + checklist + alertas"
+    "justificativa": "protocolo + confluências"
   }
 }`;
 
+// ============================================================
+// TWELVE DATA — delay ~1min, 800 req/dia grátis
+// Cadastro gratuito em: twelvedata.com
+// ============================================================
+const TWELVE_API_KEY = process.env.TWELVE_DATA_API_KEY || '';
+
+async function fetchTwelveData(symbol, outputsize = 2) {
+  if (!TWELVE_API_KEY) throw new Error('TWELVE_DATA_API_KEY não configurada');
+  const url = `https://api.twelvedata.com/time_series?symbol=${encodeURIComponent(symbol)}&interval=1min&outputsize=${outputsize}&apikey=${TWELVE_API_KEY}`;
+  const controller1 = new AbortController();
+  const timer1 = setTimeout(() => controller1.abort(), 8000);
+  const res = await fetch(url, { signal: controller1.signal }).finally(() => clearTimeout(timer1));
+  if (!res.ok) throw new Error('TwelveData HTTP ' + res.status);
+  const data = await res.json();
+  if (data.status === 'error') throw new Error('TwelveData: ' + data.message);
+  const values = data.values;
+  if (!values || values.length < 2) throw new Error('Sem dados suficientes');
+  // TwelveData retorna do mais recente (index 0) para o mais antigo (index 1+)
+  const atual    = parseFloat(values[0].close);
+  const anterior = parseFloat(values[1].close);
+  if (isNaN(atual) || isNaN(anterior)) throw new Error('TwelveData: valores inválidos');
+  const variacao = anterior !== 0 ? ((atual - anterior) / anterior) * 100 : 0;
+  return { preco: atual, variacao, fonte: 'TwelveData (~1min)' };
+}
+
+// ============================================================
+// YAHOO FINANCE — fallback quando TwelveData não disponível
+// ============================================================
 async function fetchYahoo(symbol) {
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=2d`;
+  const controller2 = new AbortController();
+  const timer2 = setTimeout(() => controller2.abort(), 8000);
   const res = await fetch(url, {
     headers: { 'User-Agent': 'Mozilla/5.0' },
-    signal: AbortSignal.timeout(8000)
-  });
+    signal: controller2.signal
+  }).finally(() => clearTimeout(timer2));
   if (!res.ok) throw new Error('Yahoo HTTP ' + res.status);
   const data = await res.json();
   const result = data.chart?.result?.[0];
-  if (!result) throw new Error('Sem dados para ' + symbol);
+  if (!result) throw new Error('Sem dados Yahoo: ' + symbol);
   const meta = result.meta;
   const preco = meta.regularMarketPrice || meta.previousClose;
-  const prev = meta.previousClose || meta.chartPreviousClose;
+  const prev  = meta.previousClose || meta.chartPreviousClose;
   const variacao = prev ? ((preco - prev) / prev) * 100 : 0;
-  return { preco, variacao };
+  return { preco, variacao, fonte: 'Yahoo (~15min)' };
 }
 
+// ============================================================
+// SELIC — Banco Central Brasil (DI1 proxy)
+// ============================================================
 async function fetchSELIC() {
-  try {
-    const url = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados/ultimos/2?formato=json';
-    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
-    const text = await res.text();
-    if (text.trim().startsWith('<')) throw new Error('HTML');
-    const data = JSON.parse(text);
-    const atual = parseFloat(data[data.length - 1].valor);
-    const anterior = parseFloat(data[data.length - 2].valor);
-    const variacao = anterior !== 0 ? ((atual - anterior) / anterior) * 100 : 0;
-    return { preco: atual, variacao, fonte: 'Banco Central' };
-  } catch (e) {
+  const urls = [
+    'https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados/ultimos/2?formato=json',
+    'https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados/ultimos/2?formato=json',
+  ];
+  for (const url of urls) {
     try {
-      const url2 = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados/ultimos/2?formato=json';
-      const res2 = await fetch(url2, { signal: AbortSignal.timeout(8000) });
-      const text2 = await res2.text();
-      if (text2.trim().startsWith('<')) throw new Error('HTML');
-      const data2 = JSON.parse(text2);
-      const atual = parseFloat(data2[data2.length - 1].valor);
-      const anterior = parseFloat(data2[data2.length - 2].valor);
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 8000);
+      const res  = await fetch(url, { signal: ctrl.signal }).finally(() => clearTimeout(t));
+      const text = await res.text();
+      if (text.trim().startsWith('<')) continue;
+      const d    = JSON.parse(text);
+      if (!Array.isArray(d) || d.length < 2) continue;
+      const atual    = parseFloat(d[d.length - 1].valor);
+      const anterior = parseFloat(d[d.length - 2].valor);
+      if (isNaN(atual) || isNaN(anterior)) continue;
       const variacao = anterior !== 0 ? ((atual - anterior) / anterior) * 100 : 0;
-      return { preco: atual, variacao, fonte: 'BCB SELIC meta' };
-    } catch (e2) {
-      return { preco: 13.75, variacao: 0, fonte: 'SELIC ref.' };
-    }
+      return { preco: atual, variacao, fonte: 'Banco Central' };
+    } catch (_) { continue; }
   }
+  return { preco: 13.75, variacao: 0, fonte: 'SELIC ref.' };
+}
+
+// ============================================================
+// MAPEAMENTO DOS ATIVOS
+// TwelveData symbols: IFNC.SA, IMAT11.SA, SPX, UKOIL, XAU/USD
+// Yahoo fallback:     IFNC.SA, IMAT.SA,  ^GSPC, BZ=F, GLD
+// ============================================================
+const ATIVOS = [
+  { id: 'IFNC',  nome: 'IFNC',    twelve: 'IFNC:BOVESPA',  yahoo: 'IFNC.SA', uni: 'pts' },
+  { id: 'IMAT',  nome: 'IMAT',    twelve: 'IMAT11:BOVESPA',  yahoo: 'IMAT.SA', uni: 'pts' },
+  { id: 'SP500', nome: 'S&P 500', twelve: 'SPX',           yahoo: '^GSPC',   uni: 'pts' },
+  { id: 'BRENT', nome: 'Brent',   twelve: 'UKOIL',         yahoo: 'BZ=F',    uni: 'usd' },
+  { id: 'OURO',  nome: 'Ouro',    twelve: 'XAU/USD',       yahoo: 'GLD',     uni: 'usd' },
+];
+
+async function fetchAtivo(ativo) {
+  // Tenta TwelveData primeiro (menor delay)
+  if (TWELVE_API_KEY) {
+    try {
+      const d = await fetchTwelveData(ativo.twelve);
+      return { ...ativo, ...d };
+    } catch (_) { /* fallback */ }
+  }
+  // Fallback: Yahoo Finance
+  const d = await fetchYahoo(ativo.yahoo);
+  return { ...ativo, ...d };
 }
 
 async function coletarDados() {
-  const ativos = [
-    { id: 'IFNC',  nome: 'IFNC',    symbol: 'IFNC.SA', uni: 'pts' },
-    { id: 'IMAT',  nome: 'IMAT',    symbol: 'IMAT.SA', uni: 'pts' },
-    { id: 'SP500', nome: 'S&P 500', symbol: '^GSPC',   uni: 'pts' },
-    { id: 'BRENT', nome: 'Brent',   symbol: 'BZ=F',    uni: 'usd' },
-    { id: 'OURO',  nome: 'Ouro',    symbol: 'GLD',     uni: 'usd' },
-    { id: 'DI1',   nome: 'DI1F29',  symbol: 'DI1F29.SA', uni: 'pts' },
-  ];
-
   const resultado = {};
-  const erros = [];
+  const erros     = [];
 
-  const resultados = await Promise.allSettled([
-    ...ativos.map(a => fetchYahoo(a.symbol).then(d => ({ ...a, ...d, fonte: 'Yahoo Finance' }))),
-  ]);
-
-  resultados.forEach(r => {
+  // Coleta ativos em paralelo
+  const results = await Promise.allSettled(ATIVOS.map(a => fetchAtivo(a)));
+  results.forEach(r => {
     if (r.status === 'fulfilled') {
       resultado[r.value.id] = r.value;
     } else {
-      erros.push(r.reason?.message || 'erro desconhecido');
+      erros.push(r.reason?.message || 'erro');
     }
   });
 
-  if (!resultado['DI1']) {
-    try {
-      const selic = await fetchSELIC();
-      resultado['DI1'] = { id: 'DI1', nome: 'DI1/SELIC', uni: '%', ...selic };
-    } catch(e) {
-      erros.push('DI1: ' + e.message);
-    }
+  // DI1 sempre via Banco Central
+  try {
+    const selic = await fetchSELIC();
+    resultado['DI1'] = { id: 'DI1', nome: 'DI1/SELIC', uni: '%', ...selic };
+  } catch (e) {
+    erros.push('DI1: ' + e.message);
   }
 
   return { dados: resultado, erros };
 }
 
-function montarContexto(dados, dadosProfit) {
-  const linhas = [`DADOS DE MERCADO — ${new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })} (BRT)`, ''];
+// ============================================================
+// MONTAR CONTEXTO PARA IA
+// ============================================================
+function montarContexto(dados, dadosProfit, candles) {
+  const brt = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+  const linhas = [`DADOS DE MERCADO — ${brt} (BRT)`, ''];
 
-  // Dados do Profit (prioridade — tempo real)
-  if (dadosProfit && Object.keys(dadosProfit).length > 0) {
-    linhas.push('=== DADOS EM TEMPO REAL (Profit/TradingView) ===');
+  // Dados Profit têm prioridade (tempo real via Python local)
+  const temProfit = dadosProfit && Object.keys(dadosProfit).length > 0;
+  if (temProfit) {
+    linhas.push('=== TEMPO REAL (Profit/TradingView) ===');
     Object.values(dadosProfit).forEach(d => {
-      if (!d.preco) return;
-      const v = d.variacao >= 0 ? `+${d.variacao.toFixed(2)}` : d.variacao.toFixed(2);
-      const val = d.uni === '%' ? `${d.preco.toFixed(2)}%` : d.uni === 'usd' ? `U$ ${d.preco.toFixed(2)}` : Math.round(d.preco).toLocaleString('pt-BR');
-      linhas.push(`${d.nome}: ${val} (${v}%) via ${d.fonte}`);
+      if (!d?.preco) return;
+      const var1 = parseFloat(d.variacao) || 0;
+      const pre1 = parseFloat(d.preco) || 0;
+      const v   = var1 >= 0 ? `+${var1.toFixed(2)}` : var1.toFixed(2);
+      const val = d.uni === '%' ? `${pre1.toFixed(2)}%` : d.uni === 'usd' ? `U$ ${pre1.toFixed(2)}` : Math.round(pre1).toLocaleString('pt-BR');
+      linhas.push(`${d.nome || d.id}: ${val} (${v}%) via ${d.fonte || '?'}`);
     });
     linhas.push('');
   }
 
-  // Dados do Yahoo (fallback)
-  if (dados && Object.keys(dados).length > 0) {
-    linhas.push('=== DADOS COMPLEMENTARES (Yahoo Finance) ===');
-    Object.values(dados).forEach(d => {
-      if (!d.preco) return;
-      const v = d.variacao >= 0 ? `+${d.variacao.toFixed(2)}` : d.variacao.toFixed(2);
-      linhas.push(`${d.nome}: ${d.preco} (${v}%) via ${d.fonte}`);
+  // Dados backend (TwelveData ~1min ou Yahoo ~15min)
+  const label = TWELVE_API_KEY ? 'BACKEND (~1min delay)' : 'BACKEND (~15min delay)';
+  linhas.push(`=== ${label} ===`);
+  Object.values(dados).forEach(d => {
+    if (!d?.preco) return;
+    const var2 = parseFloat(d.variacao) || 0;
+    const pre2 = parseFloat(d.preco) || 0;
+    const v   = var2 >= 0 ? `+${var2.toFixed(2)}` : var2.toFixed(2);
+    const val = d.uni === '%' ? `${pre2.toFixed(2)}%` : d.uni === 'usd' ? `U$ ${pre2.toFixed(2)}` : Math.round(pre2).toLocaleString('pt-BR');
+    linhas.push(`${d.nome || d.id}: ${val} (${v}%) via ${d.fonte || '?'}`);
+  });
+  linhas.push('');
+
+  // Candles do Profit (se disponíveis)
+  if (candles && Object.keys(candles).length > 0) {
+    linhas.push('=== CANDLES 1MIN (Profit) ===');
+    Object.entries(candles).forEach(([nome, cs]) => {
+      linhas.push(`${nome}: ${cs.map(c => `[${c.time} O:${c.open} H:${c.high} L:${c.low} C:${c.close} V:${c.volume}]`).join(' ')}`);
     });
     linhas.push('');
   }
 
-  linhas.push('Analise o contexto e forneça os melhores pontos de entrada para WIN e WDO.');
+  linhas.push('Analise seguindo os protocolos e forneça os melhores pontos de entrada para WIN e WDO.');
   return linhas.join('\n');
 }
 
+// ============================================================
+// HANDLER PRINCIPAL
+// ============================================================
 export default async function handler(req) {
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
+  const cors = {
+    'Access-Control-Allow-Origin':  '*',
     'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json',
+    'Content-Type':                 'application/json',
   };
 
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
+  if (req.method === 'OPTIONS') return new Response(null, { headers: cors });
 
   try {
-    const body = await req.json().catch(() => ({}));
+    const body   = await req.json().catch(() => ({}));
     const action = body.action || 'analyze';
 
+    // ── COLETAR ──────────────────────────────────────────────
     if (action === 'coletar') {
       const { dados, erros } = await coletarDados();
-      return new Response(JSON.stringify({ dados, erros }), { headers: corsHeaders });
+      return new Response(JSON.stringify({ dados, erros }), { headers: cors });
     }
 
+    // ── ANALYZE ──────────────────────────────────────────────
     if (action === 'analyze') {
-      // Coletar dados do Yahoo como fallback
       const { dados, erros } = await coletarDados();
-
-      // Dados do Profit (enviados pelo script Python)
       const dadosProfit = body.dados_profit || {};
-      const candles     = body.candles || {};
+      const candles     = body.candles     || {};
 
-      const contexto = montarContexto(dados, dadosProfit);
-      const contextoFinal = candles && Object.keys(candles).length > 0
-        ? contexto + '\n\n=== CANDLES 1 MIN (Profit) ===\n' +
-          Object.entries(candles).map(([nome, cs]) =>
-            `${nome}: ${cs.map(c => `[${c.time} O:${c.open} H:${c.high} L:${c.low} C:${c.close} V:${c.volume}]`).join(' ')}`
-          ).join('\n')
-        : contexto;
+      const contexto = montarContexto(dados, dadosProfit, candles);
 
       const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
+        method:  'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.ANTHROPIC_API_KEY,
+          'Content-Type':    'application/json',
+          'x-api-key':       process.env.ANTHROPIC_API_KEY,
           'anthropic-version': '2023-06-01',
         },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-5',
-          max_tokens: 1200,
-          system: SYSTEM_PROMPT,
-          messages: [{ role: 'user', content: contextoFinal }]
+          model:      'claude-sonnet-4-5',
+          max_tokens: 1000,
+          system:     SYSTEM_PROMPT,
+          messages:   [{ role: 'user', content: contexto }],
         }),
       });
 
+      if (!claudeRes.ok) {
+        const err = await claudeRes.json().catch(() => ({}));
+        return new Response(JSON.stringify({ dados, erros, claude: { error: err } }), { status: 200, headers: cors });
+      }
+
       const claudeData = await claudeRes.json();
-      return new Response(JSON.stringify({ dados, erros, dadosProfit, claude: claudeData }), { headers: corsHeaders });
+      return new Response(JSON.stringify({ dados, erros, dadosProfit, claude: claudeData }), { headers: cors });
     }
 
-    return new Response(JSON.stringify({ error: 'action inválida' }), { status: 400, headers: corsHeaders });
+    return new Response(JSON.stringify({ error: 'action inválida' }), { status: 400, headers: cors });
 
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: corsHeaders });
+    return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: cors });
   }
 }
